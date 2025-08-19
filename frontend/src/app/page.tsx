@@ -29,13 +29,16 @@ export default function Home() {
           </div>
 
           <div className="w-full flex flex-col space-y-4 max-w-sm mx-auto">
+            <Link href="/login">
             <button className="w-full mt-8 bg-white text-[#0096C7] py-3 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors">
-              S'inscrire
+              Connectez-vous
             </button>
+            </Link>
             <p className="text-center text-sm">
-              Vous avez déjà un compte ?
-              <Link href="/login" className="font-semibold underline">
-                Connectez-vous
+              Vous n'avez pas de compte ?
+            <br/>
+              <Link href="/" className="font-semibold underline">
+                 S'inscrire
               </Link>
             </p>
           </div>
