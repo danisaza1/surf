@@ -106,7 +106,7 @@ export default function Login() {
               <p className="text-sm text-gray-600">
                 Pas encore inscrit ?{" "}
                 <a
-                  href="/inscription"
+                  href="/create-log"
                   className="text-blue-600 hover:underline"
                 >
                   Crée ton compte
