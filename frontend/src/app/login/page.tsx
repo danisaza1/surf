@@ -126,7 +126,7 @@ export default function Login() {
             </Link>
           </div>
 
-            <Link href="/profil">
+            <Link href="/accueil">
             <button
               type="submit"
               disabled={loading}

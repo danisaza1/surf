@@ -7,8 +7,12 @@ import { Eye, EyeOff } from "lucide-react"; // Ajout d'icônes pour voir le mot 
 
 export default function CreateLog() {
   const router = useRouter();
-  const [lastname, setLastname] = useState("");
-  const [location, setLocation] = useState("");
+  const [prenom, setPrenom] = useState("");
+  const [nom, setNom] = useState("");
+  const [utilisateur, setUtilisateur] = useState("");
+  const [adresse, setAdresse] = useState("");
+  const [surf, setSurf] = useState("");
+
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,7 +63,7 @@ export default function CreateLog() {
       setLoading(false);
     }
   };
-        <div className="absolute inset-0 bg-black/50"></div>
+  <div className="absolute inset-0 bg-black/50"></div>;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')]">
@@ -75,62 +79,111 @@ export default function CreateLog() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-
-            <div>
+          <div>
             <label
               className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="lastname"
+              htmlFor="prenom"
             >
-              Nom :
+              Prénom :
             </label>
             <input
-              id="lastname"
-            type="text"
-            onChange={(e) => setLastname(e.target.value)}
-            placeholder="Entrez votre nom"
-              value={lastname}
+              id="prenom"
+              type="text"
+              onChange={(e) => setPrenom(e.target.value)}
+              placeholder="Entrez votre nom"
+              value={prenom}
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8]"
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
             />
           </div>
-           
-              
 
           <div>
             <label
               className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="location"
+              htmlFor="nom"
+            >
+              Nom :
+            </label>
+            <input
+              id="nom"
+              type="text"
+              onChange={(e) => setNom(e.target.value)}
+              placeholder="Entrez votre nom"
+              value={nom}
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block mb-2 font-medium text-[#2D3A40]"
+              htmlFor="adresse"
             >
               Adresse :
             </label>
             <input
-            id="location"
-          type="text"
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="Entrez votre adresse"
-              value={location}
+              id="adresse"
+              type="text"
+              onChange={(e) => setAdresse(e.target.value)}
+              placeholder="Entrez votre adresse"
+              value={adresse}
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8]"
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
             />
           </div>
-           
-              
+
+          <div>
+            <label
+              className="block mb-2 font-medium text-[#2D3A40]"
+              htmlFor="surf"
+            >
+              Niveau du surf
+            </label>
+            <input
+              id="surf"
+              type="text"
+              value={surf}
+              onChange={(e) => setSurf(e.target.value)}
+              placeholder="Votre niveau du surf"
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block mb-2 font-medium text-[#2D3A40]"
+              htmlFor="utilisateur"
+            >
+              Utilisateur
+            </label>
+            <input
+              id="utilisateur"
+              type="text"
+              value={utilisateur}
+              onChange={(e) => setUtilisateur(e.target.value)}
+              placeholder="Votre utilisateur"
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+            />
+          </div>
 
           <div>
             <label
               className="block mb-2 font-medium text-[#2D3A40]"
               htmlFor="email"
             >
-              Email ou nom d'utilisateur
+              Email
             </label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Votre email ou nom d'utilisateur"
+              placeholder="Votre email"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8]"
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
             />
           </div>
 
@@ -149,7 +202,7 @@ export default function CreateLog() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Votre mot de passe"
                 required
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8]"
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
               />
               <button
                 type="button"
@@ -161,27 +214,26 @@ export default function CreateLog() {
             </div>
           </div>
 
-          <div className="text-right">
-          
-          </div>
 
-                  <Link href="/confirmation">
-          <div className="flex justify-center">
-            
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Chargement..." : "envoyer"}
-            </button>
-          </div>
-            </Link>
+          
+          
+
+          <div className="text-right"></div>
+
+          <Link href="/confirmation">
+            <div className="flex justify-center">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Chargement..." : "Envoyer"}
+              </button>
+            </div>
+          </Link>
         </form>
 
-        <div className="mt-6 text-center">
-         
-        </div>
+        <div className="mt-6 text-center"></div>
       </div>
     </div>
   );
