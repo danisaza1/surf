@@ -11,7 +11,7 @@ type FormData = {
   password: string;
 };
 
-export default function AdoptingForm() {
+export default function CreateLog() {
   const router = useRouter();
 
   const [formData, setFormData] = useState<FormData>({
@@ -67,36 +67,25 @@ export default function AdoptingForm() {
 
   return (
     <>
-      <section className="relative h-auto min-h-[450px] ">
-        {/* Image de fond */}
-        <div className="absolute inset-0 bg-[url('/images/bgform.jpg')] bg-no-repeat bg-cover bg-center" />
-        {/* Overlay opaque */}
-        <div className="absolute inset-0 bg-black/48" />
+      <section className="relative h-auto min-h-[50px] ">
+    
         {/* Contenu centré verticalement et horizontalement */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center text-white px-6 min-h-[300px]">
-          <h2 className="text-5xl font-bold">DEVENIR ADOPTANT</h2>
-          <p className="mt-4 text-xl max-w-2xl text-justify">
-            Offrez un peu de votre temps, offrez-leur une seconde chance. En
-            devenant bénévole chez Pattes à coeur, vous aidez des animaux à
-            retrouver confiance et chaleur. Remplissez le formulaire pour
-            rejoindre notre belle aventure!
-          </p>
-        </div>
+        <div className="relative z-10 flex flex-col items-center justify-center text-center text-white px-6 ">
+          <h2 className="text-xl font-semibold mb-6 text-center">WAVEO</h2>
+                </div>
       </section>
-<section className="bg-gray-100 py-16 px-4">
-  <div className="max-w-3xl mx-auto bg-white p-8 rounded-4xl shadow -mt-50 relative z-20">
-    <h2 className="text-3xl font-semibold mb-4 text-center">
-      FORMULAIRE D&apos;ADOPTANT
-    </h2>
-    <p className="mb-6 text-lg text-gray-600 text-center">
-      Remplissez ce formulaire pour rencontrer un animal.
-    </p>
 
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <section className="bg-gray-100 py-0 px-4">
+    <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full border-2 border-gray-100">
+  
+ <h2 className="text-xl font-semibold mb-6 text-center">
+              Je crée mon compte
+            </h2>
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Prénom & Nom */}
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex items-center w-full gap-4">
-          <label htmlFor="firstname" className="w-20 text-right">
+          <label htmlFor="firstname" className="block mb-1 font-medium">
             Prénom :
           </label>
           <input
@@ -106,7 +95,7 @@ export default function AdoptingForm() {
             value={formData.firstname}
             onChange={handleChange}
             name="firstname"
-            className="flex-1 border border-gray-300 rounded px-4 py-2"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
         <div className="flex items-center w-full gap-4">
@@ -174,10 +163,10 @@ export default function AdoptingForm() {
       </div>
 
       {/* Bouton */}
-      <div className="flex justify-center">
+      <div className="flex justify-center mt-4">
         <button
           type="submit"
-              className="px-8 py-3 text-lg font-bold text-white bg-[#324960] rounded-lg shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:bg-[#6da2b5] hover:shadow-[0_6px_12px_rgba(6,182,212,0.4)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] transition-all duration-200 ease-in-out"
+              className="w-full bg-[#324960] text-white shadow-[0_4px_0_0_rgba(0,0,0,0.2)] hover:bg-[#4682a9] hover:text-black hover:shadow-[0_6px_12px_rgba(6,182,212,0.4)] active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] transition-all duration-200 ease-in-out font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg"
         >
           Envoyer
         </button>
