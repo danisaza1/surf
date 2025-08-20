@@ -4,17 +4,17 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bottom-0 w-full bg-[#0077B6] text-white p-2">
+    <footer className="bottom-0 w-full bg-gradient-to-r from-[#0077B6] to-[#00B4D8] text-white p-2">
       <nav>
         <ul className="flex justify-around items-center">
           <li className="flex flex-col items-center">
-            <Link href="/" className="flex flex-col items-center  text-sm transition-colors hover:text-[#00B4D8]">
+            <Link href="/accueil" className="flex flex-col items-center  text-sm transition-colors hover:text-[#00B4D8]">
               <Home size={24} />
               <span className="mt-1">Accueil</span>
             </Link>
           </li>
           <li className="flex flex-col items-center">
-            <Link href="/profile" className="flex flex-col items-center  text-sm transition-colors hover:text-[#00B4D8]">
+            <Link href="/profil" className="flex flex-col items-center  text-sm transition-colors hover:text-[#00B4D8]">
               <User size={24} />
               <span className="mt-1">Profil</span>
             </Link>
