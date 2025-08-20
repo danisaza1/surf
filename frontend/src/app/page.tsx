@@ -37,7 +37,7 @@ export default function Home() {
             <p className="text-center text-sm">
               Vous n'avez pas de compte ?
             <br/>
-              <Link href="/create-log" className="font-semibold underline">
+              <Link href="/inscription" className="font-semibold underline">
                  S'inscrire
               </Link>
             </p>

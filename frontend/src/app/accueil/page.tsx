@@ -1,6 +1,7 @@
 // app/profile/page.tsx
 import Image from "next/image";
-import { User, MapPin, Waves, LogOut, CheckCircle2 } from "lucide-react";
+import { User, MapPin, Waves, LogOut, CheckCircle2, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
@@ -21,11 +22,11 @@ export default function ProfilePage() {
   const bestSpots = ["Hossegor", "Lacanau", "Biarritz", "Nice"];
 
   return (
-    <div className="min-h-screen bg-[url('/surfbg.jpg')]  bg-cover bg-center bg-no-repeat bg-fixed relative flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[url('/surfbg.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative flex items-center justify-center p-4">
       {/* Overlay noir */}
       <div className="absolute inset-0 bg-black/50"></div>
 
-<div className="w-full max-w-lg mx-auto bg-white rounded-xl overflow-hidden shadow-xl min-h-[90vh] flex flex-col z-10 relative">
+      <div className="w-full max-w-lg mx-auto bg-white rounded-xl overflow-hidden shadow-xl min-h-[90vh] flex flex-col z-10 relative">
         <div className="relative z-20">
           <Header />
         </div>
@@ -35,7 +36,7 @@ export default function ProfilePage() {
           <div className="flex items-center justify-between pb-4 border-b border-gray-200">
             <div>
               <h1 className="text-3xl font-bold text-[#0077B6]">
-                Bienvenue, Albert !
+                Bienvenue, thomas !
               </h1>
               <p className="text-sm text-gray-500 mt-1">
                 Lundi, Août 10 - 2025
@@ -82,12 +83,15 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Section Classement */}
+          {/* Section Classement con enlace */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-              <CheckCircle2 size={20} className="text-[#00B4D8]" />
-              Classement des meilleurs spots
-            </h2>
+            <Link href="/spots" className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                <CheckCircle2 size={20} className="text-[#00B4D8]" />
+                Classement des meilleurs spots
+              </h2>
+              <ArrowRight size={20} className="text-[#00B4D8] ml-auto" />
+            </Link>
             <ul className="bg-gray-50 rounded-lg p-5 shadow-inner space-y-4">
               {bestSpots.map((spot, idx) => (
                 <li

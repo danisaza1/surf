@@ -23,7 +23,7 @@ export default function ProfilePage() {
     username: "Abeso",
     password: "123456",
     email: "example@free.fr",
-    firstName: "Albert",
+    firstName: "thomas",
     lastName: "BOSS",
     location: "Promenade des Anglais, Nice",
     surfLevel: "Intermédiaire",
@@ -115,7 +115,7 @@ export default function ProfilePage() {
                       type="text"
                       value={currentData.username}
                       onChange={(e) => handleInputChange('username', e.target.value)}
-                      className="font-semibold bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
+                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
                     />
                   ) : (
                     <p className="font-semibold text-gray-800">{currentData.username}</p>
@@ -136,7 +136,7 @@ export default function ProfilePage() {
                       type="password"
                       value={currentData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
-                      className="font-semibold bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
+                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
                     />
                   ) : (
                     <p className="font-semibold text-gray-800">••••••</p>
@@ -154,7 +154,7 @@ export default function ProfilePage() {
                       type="email"
                       value={currentData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="font-semibold bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-40 truncate"
+                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-40 truncate"
                     />
                   ) : (
                     <p className="font-semibold text-gray-800 truncate">{currentData.email}</p>
@@ -172,7 +172,7 @@ export default function ProfilePage() {
                       type="text"
                       value={currentData.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      className="font-semibold bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
+                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
                     />
                   ) : (
                     <p className="font-semibold text-gray-800">{currentData.firstName}</p>
@@ -190,7 +190,7 @@ export default function ProfilePage() {
                       type="text"
                       value={currentData.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
-                      className="font-semibold bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
+                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
                     />
                   ) : (
                     <p className="font-semibold text-gray-800">{currentData.lastName}</p>
@@ -208,7 +208,7 @@ export default function ProfilePage() {
                       type="tel"
                       value={currentData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className="font-semibold bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-40"
+                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-40"
                     />
                   ) : (
                     <p className="font-semibold text-gray-800 text-sm">{currentData.phone}</p>
@@ -226,7 +226,7 @@ export default function ProfilePage() {
                       type="text"
                       value={currentData.location}
                       onChange={(e) => handleInputChange('location', e.target.value)}
-                      className="font-semibold bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-48"
+                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-48"
                     />
                   ) : (
                     <p className="font-semibold text-gray-800 truncate">{currentData.location}</p>
@@ -243,7 +243,7 @@ export default function ProfilePage() {
                     <select
                       value={currentData.surfLevel}
                       onChange={(e) => handleInputChange('surfLevel', e.target.value)}
-                      className="font-semibold bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8]"
+                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8]"
                     >
                       <option value="Débutant">Débutant</option>
                       <option value="Intermédiaire">Intermédiaire</option>

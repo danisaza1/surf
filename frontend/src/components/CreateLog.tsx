@@ -13,7 +13,6 @@ export default function CreateLog() {
   const [adresse, setAdresse] = useState("");
   const [surf, setSurf] = useState("");
 
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -140,15 +139,21 @@ export default function CreateLog() {
             >
               Niveau du surf
             </label>
-            <input
-              id="surf"
-              type="text"
+            <select
               value={surf}
               onChange={(e) => setSurf(e.target.value)}
-              placeholder="Votre niveau du surf"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] text-gray-400"
+            >
+
+              <option value="" disabled hidden>
+                Sélectionnez votre niveau
+              </option>
+              <option value="Débutant">Débutant</option>
+              <option value="Intermédiaire">Intermédiaire</option>
+              <option value="Avancé">Avancé</option>
+              <option value="Expert">Expert</option>
+            </select>
           </div>
 
           <div>
@@ -213,10 +218,6 @@ export default function CreateLog() {
               </button>
             </div>
           </div>
-
-
-          
-          
 
           <div className="text-right"></div>
 
