@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   const pathname = usePathname();
 
-  const isProfilePage = pathname === "/surfprofil";
+  const isProfilePage = pathname === "/profil";
 
   return (
 <header className="w-full bg-gradient-to-r from-[#0077B6] to-[#00B4D8] text-white py-4">
