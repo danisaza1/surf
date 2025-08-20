@@ -1,5 +1,6 @@
+import CreateLog from "@/components/CreateLog";
 import Head from "next/head";
-import CreateLog from "../components/ceate-log";
+
 
 
 export default function Home()  {
@@ -10,7 +11,7 @@ return (<>
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   </Head>
   <div className="bg-blue-100">
-  <p>nouvelle tentative</p>
+ 
 <CreateLog/>
   </div>
 </>)

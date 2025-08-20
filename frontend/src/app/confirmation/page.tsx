@@ -20,11 +20,10 @@ export default function Home() {
           <div className="text-center mb-6">
             <h1 className="text-4xl sm:text-5xl font-bold mb-8">Waveo</h1>
             <p className="text-lg sm:text-xl font-medium">
-              Préparez votre session de surf parfaite.
+              Votre compte a été créé avec succès
             </p>
             <p className="text-sm mt-2 font-light">
-              Découvrez les prévisions de vagues et la météo en temps réel pour
-              une sécurité optimale.
+              Vous pouvez maintenant vous connecter à votre compte.
             </p>
           </div>
 
@@ -34,13 +33,8 @@ export default function Home() {
               Connectez-vous
             </button>
             </Link>
-            <p className="text-center text-sm">
-              Vous n'avez pas de compte ?
-            <br/>
-              <Link href="/create-log" className="font-semibold underline">
-                 S'inscrire
-              </Link>
-            </p>
+           
+            
           </div>
         </div>
       </div>

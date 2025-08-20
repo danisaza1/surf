@@ -5,8 +5,11 @@ import { useState } from "react";
 import Link from "next/link"; // Importation du composant Link
 import { Eye, EyeOff } from "lucide-react"; // Ajout d'icônes pour voir le mot de passe
 
-export default function Login() {
+export default function CreateLog() {
   const router = useRouter();
+  const [lastname, setLastname] = useState("");
+  const [location, setLocation] = useState("");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -62,7 +65,7 @@ export default function Login() {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')]">
       <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full border-2 border-gray-100">
         <h2 className="text-3xl font-bold mb-6 text-center text-[#0096C7]">
-          Connexion
+          Creation de compte
         </h2>
 
         {error && (
@@ -72,14 +75,54 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          
+
+            <div>
+            <label
+              className="block mb-2 font-medium text-[#2D3A40]"
+              htmlFor="lastname"
+            >
+              Nom :
+            </label>
+            <input
+              id="lastname"
+            type="text"
+            onChange={(e) => setLastname(e.target.value)}
+            placeholder="Entrez votre nom"
+              value={lastname}
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8]"
+            />
+          </div>
+           
+              
+
+          <div>
+            <label
+              className="block mb-2 font-medium text-[#2D3A40]"
+              htmlFor="location"
+            >
+              Adresse :
+            </label>
+            <input
+            id="location"
+          type="text"
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Entrez votre adresse"
+              value={location}
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8]"
+            />
+          </div>
+           
+              
+
+          <div>
             <label
               className="block mb-2 font-medium text-[#2D3A40]"
               htmlFor="email"
             >
               Email ou nom d'utilisateur
             </label>
-            <div className="relative">
             <input
               id="email"
               type="email"
@@ -119,36 +162,25 @@ export default function Login() {
           </div>
 
           <div className="text-right">
-            <Link
-              href="/missed-password"
-              className="text-sm text-[#0096C7] hover:underline"
-            >
-              Mot de passe oublié ?
-            </Link>
+          
           </div>
-          <Link href="/surfprofil">
-            <div className="flex justify-center">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Chargement..." : "Je me connecte"}
-              </button>
-           </div>
-          </Link>
+
+                  <Link href="/confirmation">
+          <div className="flex justify-center">
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Chargement..." : "envoyer"}
+            </button>
+          </div>
+            </Link>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Pas encore inscrit ?{" "}
-            <Link
-              href="/create-log"
-              className="text-[#0096C7] font-semibold hover:underline"
-            >
-              Crée ton compte
-            </Link>
-          </p>
+         
         </div>
       </div>
     </div>
