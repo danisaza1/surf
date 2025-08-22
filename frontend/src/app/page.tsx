@@ -91,7 +91,6 @@ const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = () => {
   }
 };
 
-
   // styles du cube
   const duration = animating ? 350 : 0; // ms (quand on relâche)
   const cubeStyle: React.CSSProperties = {
