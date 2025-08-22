@@ -99,7 +99,7 @@ export default function ProfilePage() {
                   className="flex items-center gap-4 p-3 rounded-lg transition-colors bg-white hover:bg-gray-100"
                 >
                   <span className="font-bold text-lg text-gray-500 flex-shrink-0">
-                    #{idx + 1}
+                    <div className="w-6 h-6 rounded-full bg-amber-300" />
                   </span>
                   <span className="font-medium text-gray-800">{spot}</span>
                 </li>
