@@ -103,7 +103,7 @@ export default function ProfilePage() {
             <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
               <User size={20} className="text-[#00B4D8]" /> Profil
             </h2>
-            <div className="bg-gray-50 rounded-lg p-5 shadow-inner space-y-6">
+            <div className="bg-cyan-100 rounded-lg p-5 shadow-inner space-y-6">
               
               {/* Username */}
               <div className="flex items-center gap-4">
