@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -28,17 +30,17 @@ export default function Home() {
   }, []);
 
   /** Lance une animation vers 0° ou 90° */
-  const settleTo = (target: 0 | 90) => {
-    setAnimating(true);
-    setAngle((prev) => prev); // déclenche transition CSS
-    // on laisse la transition CSS jouer puis on verrouille l'état final
-    const dur = 350;
-    setTimeout(() => {
-      setAnimating(false);
-      setAngle(target);
-      setActive(target === 90 ? 1 : 0);
-    }, dur);
-  };
+const settleTo = (target: -90 | 0) => {
+  setAnimating(true);
+  setAngle((prev) => prev); // déclenche transition CSS
+  // on laisse la transition CSS jouer puis on verrouille l'état final
+  const dur = 350;
+  setTimeout(() => {
+    setAnimating(false);
+    setAngle(target);
+    setActive(target === -90 ? 1 : 0);
+  }, dur);
+};
 
   const onTouchStart: React.TouchEventHandler<HTMLDivElement> = (e) => {
     if (animating) return;
@@ -49,47 +51,46 @@ export default function Home() {
     velocity.current = 0;
   };
 
-  const onTouchMove: React.TouchEventHandler<HTMLDivElement> = (e) => {
-    if (!dragging.current || animating || w === 0) return;
-    const x = e.touches[0].clientX;
-    const dx = x - startX.current;
-    const now = performance.now();
-    const dt = Math.max(1, now - lastT.current);
-    velocity.current = (x - lastX.current) / dt; // px/ms
-    lastX.current = x;
-    lastT.current = now;
+const onTouchMove: React.TouchEventHandler<HTMLDivElement> = (e) => {
+  if (!dragging.current || animating || w === 0) return;
+  const x = e.touches[0].clientX;
+  const dx = x - startX.current;
+  const now = performance.now();
+  const dt = Math.max(1, now - lastT.current);
+  velocity.current = (x - lastX.current) / dt; // px/ms
+  lastX.current = x;
+  lastT.current = now;
+  // progression en fonction du sens et de la face active
+  let progress: number;
+  if (active === 0) {
+    // on part de 0° et on va vers -90° avec un swipe gauche (dx négatif)
+    progress = Math.min(1, Math.max(0, -dx / w));
+    setAngle(-progress * 90);
+  } else {
+    // on part de -90° et on revient à 0° avec swipe droit (dx positif)
+    progress = Math.min(1, Math.max(0, dx / w));
+    setAngle(-90 + progress * 90);
+  }
+};
 
-    // progression en fonction du sens et de la face active
-    let progress: number;
-    if (active === 0) {
-      // on part de 0° et on va vers 90° avec un swipe gauche (dx négatif)
-      progress = Math.min(1, Math.max(0, -dx / w));
-      setAngle(progress * 90);
-    } else {
-      // on part de 90° et on revient à 0° avec swipe droit (dx positif)
-      progress = Math.min(1, Math.max(0, dx / w));
-      setAngle(90 - progress * 90);
-    }
-  };
+const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = () => {
+  if (!dragging.current || animating) return;
+  dragging.current = false;
+  // seuil : soit plus de 50% du chemin, soit une vitesse suffisante
+  const fast = Math.abs(velocity.current) > 0.8 / 16; // ~0.05 px/ms ≈ 800px/s
+  if (active === 0) {
+    const openedEnough = angle < -45;
+    const flung = velocity.current < -0.05; // vers la gauche
+    if (openedEnough || flung) settleTo(-90);
+    else settleTo(0);
+  } else {
+    const closedEnough = angle > -45;
+    const flung = velocity.current > 0.05; // vers la droite
+    if (closedEnough || flung) settleTo(0);
+    else settleTo(-90);
+  }
+};
 
-  const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = () => {
-    if (!dragging.current || animating) return;
-    dragging.current = false;
-
-    // seuil : soit plus de 50% du chemin, soit une vitesse suffisante
-    const fast = Math.abs(velocity.current) > 0.8 / 16; // ~0.05 px/ms ≈ 800px/s
-    if (active === 0) {
-      const openedEnough = angle > 45;
-      const flung = velocity.current < -0.05; // vers la gauche
-      if (openedEnough || flung) settleTo(90);
-      else settleTo(0);
-    } else {
-      const closedEnough = angle < 45;
-      const flung = velocity.current > 0.05; // vers la droite
-      if (closedEnough || flung) settleTo(0);
-      else settleTo(90);
-    }
-  };
 
   // styles du cube
   const duration = animating ? 350 : 0; // ms (quand on relâche)
@@ -187,4 +188,3 @@ export default function Home() {
     </>
   );
 }
-
