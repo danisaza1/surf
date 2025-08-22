@@ -1,74 +1,121 @@
-"use client";
-
-import { useState } from "react";
-import { useSwipeable } from "react-swipeable";
-import Head from "next/head";
+// app/profile/page.tsx
+import Image from "next/image";
+import { User, MapPin, Waves, LogOut, CheckCircle2, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
-export default function Home() {
-  const [showPage, setShowPage] = useState(false);
+// Optionnel: Définir l'interface
+interface UserProfile {
+  name: string;
+  location: string;
+  surfLevel: string;
+}
 
-  // Détection du swipe
-  const handlers = useSwipeable({
-    onSwipedLeft: () => setShowPage(true),   // swipe vers la gauche → montre page
-    onSwipedRight: () => setShowPage(false), // swipe vers la droite → ferme page
-    preventScrollOnSwipe: true,
-    trackTouch: true,
-    trackMouse: false,
-  });
+export default function ProfilePage() {
+  const user: UserProfile = {
+    name: "BOSS, Albert",
+    location: "Promenade des Anglais, Nice",
+    surfLevel: "Intermédiaire",
+  };
+
+  const bestSpots = ["Hossegor", "Lacanau", "Biarritz", "Nice"];
 
   return (
-    <>
-      <Head>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      </Head>
+    <div className="min-h-screen bg-[url('/surfbg.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative flex items-center justify-center p-4">
+      {/* Overlay noir */}
+      <div className="absolute inset-0 bg-black/50"></div>
 
-      {/* Conteneur principal avec détection swipe */}
-      <div {...handlers} className="relative overflow-hidden h-screen">
-        {/* PAGE D'ACCUEIL */}
-        <div className="h-full bg-[url('/surfbg.jpg')] bg-cover bg-center relative flex items-center justify-center">
-          {/* Overlay noir */}
-          <div className="absolute inset-0 bg-black/50"></div>
+      <div className="w-full max-w-lg mx-auto bg-white rounded-xl overflow-hidden shadow-xl min-h-[90vh] flex flex-col z-10 relative">
+        <div className="relative z-20">
+          <Header />
+        </div>
 
-          {/* Contenu centré */}
-          <div className="flex flex-col text-white relative z-10 p-4 sm:p-6 md:p-8">
-            <div className="text-center mb-6">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-8">Waveo</h1>
-              <p className="text-lg sm:text-xl font-medium">
-                Préparez votre session de surf parfaite.
-              </p>
-              <p className="text-sm mt-2 font-light">
-                Découvrez les prévisions de vagues et la météo en temps réel
-                pour une sécurité optimale.
+        <div className="flex-1 p-6 space-y-8">
+          {/* Section de Bienvenue */}
+          <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+            <div>
+              <h1 className="text-3xl font-bold text-[#0077B6]">
+                Bienvenue, thomas !
+              </h1>
+              <p className="text-sm text-gray-500 mt-1">
+                Lundi, Août 10 - 2025
               </p>
             </div>
-
-            <div className="w-full flex flex-col space-y-4 max-w-sm mx-auto">
-              <Link href="/login">
-                <button className="w-full mt-8 bg-white text-[#0096C7] py-3 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors">
-                  Connectez-vous
-                </button>
-              </Link>
-              <p className="text-center text-sm">
-                Vous n'avez pas de compte ? <br />
-                <Link href="/inscription" className="font-semibold underline">
-                  S'inscrire
-                </Link>
-              </p>
+            <div className="relative w-20 h-20 flex-shrink-0">
+              <Image
+                src="/profile.png"
+                alt="Profile"
+                fill
+                className="rounded-full border-4 border-amber-300 shadow-lg object-cover"
+              />
             </div>
+          </div>
+
+          {/* Section du Profil */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+              <User size={20} className="text-[#00B4D8]" /> Profil
+            </h2>
+            <div className="bg-amber-100 rounded-lg p-5 shadow-inner space-y-4">
+              <div className="flex items-center gap-4">
+                <MapPin size={20} className="text-gray-600 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-500">
+                    Localisation
+                  </p>
+                  <p className="font-semibold text-gray-800 truncate">
+                    {user.location}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Waves size={20} className="text-gray-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-500">
+                    Niveau de Surf
+                  </p>
+                  <p className="font-semibold text-gray-800">
+                    {user.surfLevel}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section Classement con enlace */}
+          <div className="space-y-4">
+            <Link href="/spots" className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                <CheckCircle2 size={20} className="text-[#00B4D8]" />
+                Classement des meilleurs spots
+              </h2>
+              <ArrowRight size={20} className="text-[#00B4D8] ml-auto" />
+            </Link>
+            <ul className="bg-cyan-100 rounded-lg p-5 shadow-inner space-y-4">
+              {bestSpots.map((spot, idx) => (
+                <li
+                  key={idx}
+                  className="flex items-center gap-4 p-3 rounded-lg transition-colors bg-white hover:bg-gray-100"
+                >
+                  <span className="font-bold text-lg text-gray-500 flex-shrink-0">
+                    #{idx + 1}
+                  </span>
+                  <span className="font-medium text-gray-800">{spot}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        {/* PAGE NOIRE "COUCOU" */}
-        <div
-          className={`fixed top-0 right-0 h-full w-full bg-black text-white flex items-center justify-center text-3xl font-bold transition-transform duration-500 ease-out
-            ${showPage ? "translate-x-0" : "translate-x-full"}
-          `}
-        >
-          Coucou 👋
+        {/* Footer & Bouton de déconnexion */}
+        <div className="w-full mt-auto relative z-20">
+          <div className="p-4 text-center text-sm text-gray-500 border-t border-gray-200">
+            Bonne session ! 🤙
+          </div>
+          <Footer />
         </div>
       </div>
-    </>
+    </div>
   );
 }
