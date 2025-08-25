@@ -57,7 +57,7 @@ export default function ProfilePage() {
             <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
               <User size={20} className="text-[#00B4D8]" /> Profil
             </h2>
-            <div className="bg-amber-100 rounded-lg p-5 shadow-inner space-y-4">
+            <div className="bg-sky-100 rounded-lg p-5 shadow-inner space-y-4">
               <div className="flex items-center gap-4">
                 <MapPin size={20} className="text-gray-600 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
@@ -92,11 +92,11 @@ export default function ProfilePage() {
               </h2>
               <ArrowRight size={20} className="text-[#00B4D8] ml-auto" />
             </Link>
-            <ul className="bg-cyan-100 rounded-lg p-5 shadow-inner space-y-4">
+            <ul className="bg-sky-100 rounded-lg p-5 shadow-inner space-y-4">
               {bestSpots.map((spot, idx) => (
                 <li
                   key={idx}
-                  className="flex items-center gap-4 p-3 rounded-lg transition-colors bg-white hover:bg-gray-100"
+                  className="flex items-center gap-4 p-3 rounded-lg transition-colors bg-white hover:bg-gray-100 justify-ce"
                 >
                   <span className="font-bold text-lg text-gray-500 flex-shrink-0">
                     <div className="w-6 h-6 rounded-full bg-amber-300" />
