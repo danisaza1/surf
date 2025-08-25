@@ -37,7 +37,7 @@ export default function ProfilePage() {
             {/* Section de Bienvenue */}
             <div className="flex items-center justify-between pb-4 border-b border-gray-200">
               <div>
-                <h1 className="text-3xl font-bold text-[#0077B6]">
+                <h1 className="text-3xl  text-[#0077B6]">
                   Bienvenue, thomas !
                 </h1>
                 <p className="text-sm text-gray-500 mt-1">
@@ -55,17 +55,17 @@ export default function ProfilePage() {
             </div>
             {/* Section du Profil */}
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+              <h2 className="text-xl  text-gray-800 flex items-center gap-2">
                 <User size={20} className="text-[#00B4D8]" /> Profil
               </h2>
-              <div className="bg-gray-50 rounded-lg p-5 shadow-inner space-y-4">
+              <div className="bg-amber-50 rounded-lg p-5 shadow-inner space-y-4">
                 <div className="flex items-center gap-4">
                   <MapPin size={20} className="text-gray-600 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-500">
                       Localisation
                     </p>
-                    <p className="font-semibold text-gray-800 truncate">
+                    <p className=" text-gray-800 truncate">
                       {user.location}
                     </p>
                   </div>
@@ -76,7 +76,7 @@ export default function ProfilePage() {
                     <p className="text-sm font-medium text-gray-500">
                       Niveau de Surf
                     </p>
-                    <p className="font-semibold text-gray-800">
+                    <p className=" text-gray-800">
                       {user.surfLevel}
                     </p>
                   </div>
@@ -85,7 +85,7 @@ export default function ProfilePage() {
             </div>
             {/* Section Classement con enlaces dinámicos */}
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+              <h2 className="text-xl text-gray-800 flex items-center gap-2">
                 <CheckCircle2 size={20} className="text-[#00B4D8]" />
                 Classement des meilleurs spots
               </h2>
@@ -94,7 +94,7 @@ export default function ProfilePage() {
                   <li key={spot}>
                     <Link
                       href={`/hotspot/${spot.toLowerCase()}`}
-                      className="block text-center bg-[#00B4D8] text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-[#0096C7] transition-colors"
+                      className="block text-center bg-[#00B4D8] text-white py-3 px-4 rounded-lg shadow-md hover:bg-[#0096C7] transition-colors"
                     >
                       {spot}
                     </Link>
