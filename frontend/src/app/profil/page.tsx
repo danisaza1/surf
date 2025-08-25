@@ -1,7 +1,17 @@
-'use client';
+"use client";
 // app/profile/page.tsx
 import Image from "next/image";
-import { User, MapPin, Waves, Edit3, Save, X, Mail, Phone, CheckCircle2 } from "lucide-react";
+import {
+  User,
+  MapPin,
+  Waves,
+  Edit3,
+  Save,
+  X,
+  Mail,
+  Phone,
+  CheckCircle2,
+} from "lucide-react";
 import { useState } from "react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -27,7 +37,7 @@ export default function ProfilePage() {
     lastName: "BOSS",
     location: "Promenade des Anglais, Nice",
     surfLevel: "Intermédiaire",
-    phone: "+33 6 12 34 56 78"
+    phone: "+33 6 12 34 56 78",
   });
 
   const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
@@ -49,9 +59,9 @@ export default function ProfilePage() {
   };
 
   const handleInputChange = (field: keyof UserProfile, value: string) => {
-    setEditedProfile(prev => ({
+    setEditedProfile((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -61,15 +71,14 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[url('/surfbg.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative flex items-center justify-center p-4">
       {/* Overlay noir */}
       <div className="absolute inset-0 bg-black/50"></div>
-      
-      <div className="w-full max-w-lg mx-auto bg-white rounded-xl overflow-hidden shadow-xl min-h-[90vh] flex flex-col z-10 relative">
-        
+
+        <div className="w-full max-w-lg mx-auto bg-white rounded-xl overflow-hidden shadow-xl relative">
         {/* Header avec z-index pour s'assurer qu'il apparaît */}
-        <div className="relative z-20">
+          <div className="relative z-20 hidden md:block">
           <Header />
         </div>
 
-        <div className="flex-1 p-6 space-y-8">
+          <div className="flex-1 p-6 space-y-8 md:pb-0 pb-15">
           {/* Section de Bienvenue */}
           <div className="flex items-center justify-between pb-4 border-b border-gray-200">
             <div>
@@ -104,21 +113,26 @@ export default function ProfilePage() {
               <User size={20} className="text-[#00B4D8]" /> Profil
             </h2>
             <div className="bg-gray-50 rounded-lg p-5 shadow-inner space-y-6">
-              
               {/* Username */}
               <div className="flex items-center gap-4">
                 <User size={16} className="text-gray-600 flex-shrink-0" />
                 <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">Nom d'utilisateur</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    Nom d'utilisateur
+                  </p>
                   {isEditing ? (
                     <input
                       type="text"
                       value={currentData.username}
-                      onChange={(e) => handleInputChange('username', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("username", e.target.value)
+                      }
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800">{currentData.username}</p>
+                    <p className="font-semibold text-gray-800">
+                      {currentData.username}
+                    </p>
                   )}
                 </div>
               </div>
@@ -130,12 +144,16 @@ export default function ProfilePage() {
                   <div className="w-2 h-2 bg-gray-600 rounded-full ml-0.5"></div>
                 </div>
                 <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">Mot de passe</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    Mot de passe
+                  </p>
                   {isEditing ? (
                     <input
                       type="password"
                       value={currentData.password}
-                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("password", e.target.value)
+                      }
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
                     />
                   ) : (
@@ -153,11 +171,15 @@ export default function ProfilePage() {
                     <input
                       type="email"
                       value={currentData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-40 truncate"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800 truncate">{currentData.email}</p>
+                    <p className="font-semibold text-gray-800 truncate">
+                      {currentData.email}
+                    </p>
                   )}
                 </div>
               </div>
@@ -171,11 +193,15 @@ export default function ProfilePage() {
                     <input
                       type="text"
                       value={currentData.firstName}
-                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("firstName", e.target.value)
+                      }
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800">{currentData.firstName}</p>
+                    <p className="font-semibold text-gray-800">
+                      {currentData.firstName}
+                    </p>
                   )}
                 </div>
               </div>
@@ -189,11 +215,15 @@ export default function ProfilePage() {
                     <input
                       type="text"
                       value={currentData.lastName}
-                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("lastName", e.target.value)
+                      }
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800">{currentData.lastName}</p>
+                    <p className="font-semibold text-gray-800">
+                      {currentData.lastName}
+                    </p>
                   )}
                 </div>
               </div>
@@ -207,11 +237,15 @@ export default function ProfilePage() {
                     <input
                       type="tel"
                       value={currentData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-40"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800 text-sm">{currentData.phone}</p>
+                    <p className="font-semibold text-gray-800 text-sm">
+                      {currentData.phone}
+                    </p>
                   )}
                 </div>
               </div>
@@ -220,16 +254,22 @@ export default function ProfilePage() {
               <div className="flex items-center gap-4">
                 <MapPin size={16} className="text-gray-600 flex-shrink-0" />
                 <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">Localisation</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    Localisation
+                  </p>
                   {isEditing ? (
                     <input
                       type="text"
                       value={currentData.location}
-                      onChange={(e) => handleInputChange('location', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("location", e.target.value)
+                      }
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-48"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800 truncate">{currentData.location}</p>
+                    <p className="font-semibold text-gray-800 truncate">
+                      {currentData.location}
+                    </p>
                   )}
                 </div>
               </div>
@@ -238,11 +278,15 @@ export default function ProfilePage() {
               <div className="flex items-center gap-4">
                 <Waves size={16} className="text-gray-600 flex-shrink-0" />
                 <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">Niveau de Surf</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    Niveau de Surf
+                  </p>
                   {isEditing ? (
                     <select
                       value={currentData.surfLevel}
-                      onChange={(e) => handleInputChange('surfLevel', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("surfLevel", e.target.value)
+                      }
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8]"
                     >
                       <option value="Débutant">Débutant</option>
@@ -251,7 +295,9 @@ export default function ProfilePage() {
                       <option value="Expert">Expert</option>
                     </select>
                   ) : (
-                    <p className="font-semibold text-gray-800">{currentData.surfLevel}</p>
+                    <p className="font-semibold text-gray-800">
+                      {currentData.surfLevel}
+                    </p>
                   )}
                 </div>
               </div>
@@ -277,17 +323,21 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
-
-          
+        {/* Footer & Mensaje */}
+        <div className="p-4 text-center text-sm text-gray-500 border-t border-gray-200 pb-10">
+          Bonne session ! 🤙
         </div>
-
-        {/* Footer & Bouton de déconnexion */}
-        <div className="w-full mt-auto relative z-20">
-          <div className="p-4 text-center text-sm text-gray-500 border-t border-gray-200">
-            Bonne session ! 🤙
-          </div>
-          <Footer />
         </div>
+      {/* Footer en desktop - dentro de la card */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
+      </div>
+
+
+      {/* Footer flotante en móvil - fuera del contenedor principal */}
+      <div className="md:hidden">
+        <Footer />
       </div>
     </div>
   );
