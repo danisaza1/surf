@@ -198,6 +198,9 @@ export default function CreateLog() {
               htmlFor="password"
             >
               Mot de passe
+              <div className="font-light text-xs text-gray-400">
+                le mot de passe doit contenir au moins 8 caractères, une majuscule un chiffre et un caractère spécial.
+              </div>
             </label>
             <div className="relative">
               <input

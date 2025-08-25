@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-
+import Link from "next/link"; // Importation du composant Link
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -149,7 +149,7 @@ export default function Login() {
             </div>
           </div>
           {/* je laisse le link pour la présentation front, je l'enlève */}
-        <link href="/validate-password">
+        <Link href="/validate-password">
           {/* CORRECTION PRINCIPALE: Supprimer le Link qui wrappait le bouton  on le retrouve dans le if avec router.push */}
           <div className="flex justify-center">
             <button
@@ -160,7 +160,7 @@ export default function Login() {
               {loading ? "Chargement..." : "Validation du mot de passe"}
             </button>
           </div>
-        </link>
+        </Link>
         </form>
       </div>
     </div>
