@@ -1,18 +1,12 @@
 // app/hotspot/guide/page.tsx
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import MainLayout from "@/components/MainLayout";
 
 export default function SurfGuidePage() {
   return (
     <>
-      <div className="min-h-screen bg-[url('/surfbg.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative flex items-center justify-center p-4">
-        {/* Overlay noir */}
-        <div className="absolute inset-0 bg-black/50"></div>
-
-        <div className="w-full max-w-lg mx-auto bg-white/90 rounded-xl overflow-hidden shadow-xl relative">
-          <div className="relative z-20 hidden md:block">
-            <Header />
-          </div>
+      <MainLayout>
+       
+    
 
           <main className="flex-1 p-6 space-y-8 md:pb-0 pb-12">
             <h1 className="text-4xl font-bold text-[#0077B6] text-center mb-6">
@@ -120,22 +114,22 @@ export default function SurfGuidePage() {
                 <li>Température de l'eau confortable</li>
               </ul>
             </section>
+            {/* Retour à l'accueil */}
+<div className="flex justify-center mt-8 mb-12">
+  <a
+    href="accueil"
+    className="bg-[#0077B6] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-[#005F99] transition-colors"
+  >
+    ⬅ Retour à l'accueil
+  </a>
+</div>
 
             {/* Footer & Message */}
             <div className="p-4 text-center text-sm text-gray-700 border-t border-gray-200 pb-10">
               Bonne session ! 🤙
             </div>
           </main>
-          {/* Footer en desktop - dentro de la card */}
-          <div className="hidden md:block">
-            <Footer />
-          </div>
-        </div>
-      </div>
-      {/* Footer flottant sur mobile */}
-      <div className="md:hidden">
-        <Footer />
-      </div>
+           </MainLayout>
     </>
   );
 }

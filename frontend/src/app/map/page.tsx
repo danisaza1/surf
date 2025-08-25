@@ -3,11 +3,11 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { FlagTriangleRight } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import L from "leaflet";
 import ReactDOMServer from "react-dom/server";
 import Image from "next/image";
+import MainLayout from "@/components/MainLayout";
+import { Main } from "next/document";
 
 
 // Array de spots de surf en Francia (lat/lon)
@@ -47,15 +47,7 @@ export default function SurfMapPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-[url('/surfbg.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative flex items-center justify-center p-4">
-        {/* Overlay noir */}
-        <div className="absolute inset-0 bg-black/50"></div>
-
-        <div className="w-full max-w-lg mx-auto bg-white rounded-xl overflow-hidden shadow-xl relative">
-          {/* Header - solo visible en desktop */}
-          <div className="relative z-20 hidden md:block">
-            <Header />
-          </div>
+      <MainLayout>
           
           <main className="flex-1 p-6 space-y-8 md:pb-0 pb-15">
               {/* Section de Bienvenue */}
@@ -116,17 +108,7 @@ export default function SurfMapPage() {
             </div>
           </main>
           
-          {/* Footer en desktop - dentro de la card */}
-          <div className="hidden md:block">
-            <Footer />
-          </div>
-        </div>
-
-        {/* Footer flotante en móvil - fuera del contenedor principal */}
-        <div className="md:hidden mt-4">
-          <Footer />
-        </div>
-      </div>
+          </MainLayout>
     </>
   );
 }

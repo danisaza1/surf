@@ -2,8 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link"; // Importation du composant Link
-import { Eye, EyeOff } from "lucide-react"; // Ajout d'icônes pour voir le mot de passe
+import { Eye, EyeOff } from "lucide-react";
 
 export default function CreateLog() {
   const router = useRouter();
@@ -12,7 +11,6 @@ export default function CreateLog() {
   const [utilisateur, setUtilisateur] = useState("");
   const [adresse, setAdresse] = useState("");
   const [surf, setSurf] = useState("");
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +23,6 @@ export default function CreateLog() {
     setError(null);
 
     try {
-      // Appel à ton API backend pour vérifier l'email + password
       const response = await fetch(
         "https://patacoeur-backend.vercel.app/api/adoptant/login/",
         {
@@ -38,37 +35,31 @@ export default function CreateLog() {
       );
 
       const data = await response.json();
-      console.log("Status:", response.status);
-      console.log("Response data:", data);
 
       if (response.ok) {
-        // Récupérer le token d'accès depuis la réponse et le stocker
         const { access_token } = data;
         if (access_token) {
-          localStorage.setItem("token", access_token); // Stocker dans localStorage
+          localStorage.setItem("token", access_token);
           router.push("/volunteer/dashboard");
         } else {
           setError("Échec de la connexion. Aucune réponse valide du serveur.");
         }
       } else {
-        // Gérer les erreurs de connexion avec un message spécifique
         setError("Échec de la connexion. Vérifiez vos identifiants.");
       }
     } catch (err) {
-      // Gérer les erreurs réseau ou autres
       setError("Erreur de connexion. Veuillez réessayer plus tard.");
       console.error("Login failed:", err);
     } finally {
       setLoading(false);
     }
   };
-  <div className="absolute inset-0 bg-black/50"></div>;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')] ">
-      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full border-2 border-gray-100">
-        <h2 className="text-3xl font-bold mb-6 text-center text-[#0096C7]">
-          Creation de compte
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')] bg-cover bg-center">
+      <div className="bg-white rounded-xl shadow-2xl p-6 sm:p-8 md:p-12 max-w-md sm:max-w-lg md:max-w-2xl w-full border-2 border-gray-100">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center text-[#0096C7]">
+          Création de compte
         </h2>
 
         {error && (
@@ -78,47 +69,43 @@ export default function CreateLog() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="prenom"
-            >
-              Prénom :
-            </label>
-            <input
-              id="prenom"
-              type="text"
-              onChange={(e) => setPrenom(e.target.value)}
-              placeholder="Entrez votre nom"
-              value={prenom}
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
+
+          {/* Prénom / Nom */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="prenom">
+                Prénom :
+              </label>
+              <input
+                id="prenom"
+                type="text"
+                onChange={(e) => setPrenom(e.target.value)}
+                placeholder="Entrez votre prénom"
+                value={prenom}
+                required
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="nom">
+                Nom :
+              </label>
+              <input
+                id="nom"
+                type="text"
+                onChange={(e) => setNom(e.target.value)}
+                placeholder="Entrez votre nom"
+                value={nom}
+                required
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              />
+            </div>
           </div>
 
+          {/* Adresse */}
           <div>
-            <label
-              className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="nom"
-            >
-              Nom :
-            </label>
-            <input
-              id="nom"
-              type="text"
-              onChange={(e) => setNom(e.target.value)}
-              placeholder="Entrez votre nom"
-              value={nom}
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
-          </div>
-
-          <div>
-            <label
-              className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="adresse"
-            >
+            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="adresse">
               Adresse :
             </label>
             <input
@@ -132,11 +119,9 @@ export default function CreateLog() {
             />
           </div>
 
+          {/* Niveau de surf */}
           <div>
-            <label
-              className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="surf"
-            >
+            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="surf">
               Niveau du surf
             </label>
             <select
@@ -145,7 +130,6 @@ export default function CreateLog() {
               required
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] text-gray-400"
             >
-
               <option value="" disabled hidden>
                 Sélectionnez votre niveau
               </option>
@@ -156,47 +140,42 @@ export default function CreateLog() {
             </select>
           </div>
 
-          <div>
-            <label
-              className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="utilisateur"
-            >
-              Utilisateur
-            </label>
-            <input
-              id="utilisateur"
-              type="text"
-              value={utilisateur}
-              onChange={(e) => setUtilisateur(e.target.value)}
-              placeholder="Votre utilisateur"
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
+          {/* Utilisateur / Email */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="utilisateur">
+                Utilisateur
+              </label>
+              <input
+                id="utilisateur"
+                type="text"
+                value={utilisateur}
+                onChange={(e) => setUtilisateur(e.target.value)}
+                placeholder="Votre utilisateur"
+                required
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Votre email"
+                required
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              />
+            </div>
           </div>
 
+          {/* Mot de passe */}
           <div>
-            <label
-              className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Votre email"
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
-          </div>
-
-          <div>
-            <label
-              className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="password"
-            >
+            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="password">
               Mot de passe
             </label>
             <div className="relative">
@@ -219,22 +198,17 @@ export default function CreateLog() {
             </div>
           </div>
 
-          <div className="text-right"></div>
-
-          <Link href="/confirmation">
-            <div className="flex justify-center">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Chargement..." : "Envoyer"}
-              </button>
-            </div>
-          </Link>
+          {/* Bouton Envoyer */}
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Chargement..." : "Envoyer"}
+            </button>
+          </div>
         </form>
-
-        <div className="mt-6 text-center"></div>
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 "use client";
-// app/profile/page.tsx
 import Image from "next/image";
 import {
   User,
@@ -10,12 +9,9 @@ import {
   X,
   Mail,
   Phone,
-  CheckCircle2,
 } from "lucide-react";
 import { useState } from "react";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-
+import MainLayout from "@/components/MainLayout";
 interface UserProfile {
   username: string;
   password: string;
@@ -41,7 +37,6 @@ export default function ProfilePage() {
   });
 
   const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
-  const bestSpots = ["Hossegor", "Lacanau", "Biarritz", "Nice"];
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -68,28 +63,17 @@ export default function ProfilePage() {
   const currentData = isEditing ? editedProfile : profile;
 
   return (
-    <div className="min-h-screen bg-[url('/surfbg.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative flex items-center justify-center p-4">
-      {/* Overlay noir */}
-      <div className="absolute inset-0 bg-black/50"></div>
+       <MainLayout>
+       
 
-        <div className="w-full max-w-lg mx-auto bg-white rounded-xl overflow-hidden shadow-xl relative">
-        {/* Header avec z-index pour s'assurer qu'il apparaît */}
-          <div className="relative z-20 hidden md:block">
-          <Header />
-        </div>
-
-          <div className="flex-1 p-6 space-y-8 md:pb-0 pb-15">
-          {/* Section de Bienvenue */}
-          <div className="flex items-center justify-between pb-4 border-b border-gray-200">
-            <div>
-              <h1 className="text-3xl font-bold text-[#0077B6]">
-                Bienvenue, {currentData.firstName} !
-              </h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Lundi, Août 19 - 2025
-              </p>
-            </div>
-            <div className="relative w-20 h-20 flex-shrink-0">
+        {/* Section principale avec deux colonnes sur desktop */}
+        <div className="flex flex-col justify-center md:flex-row p-6 md:p-8 md:space-x-8">
+          
+          {/* Colonne de gauche: Salutation et Image de profil */}
+          <div className="flex flex-col items-center text-center pb-4 md:pb-0 md:w-1/3 md:flex-shrink-0 md:justify-center md:items-start md:text-left">
+            
+            {/* Image de profil plus grande sur desktop */}
+            <div className="relative w-24 h-24 md:w-40 md:h-40 flex-shrink-0 mx-auto md:mx-0 mb-4">
               <Image
                 src="/profile.png"
                 alt="Profile"
@@ -99,213 +83,194 @@ export default function ProfilePage() {
               {!isEditing && (
                 <button
                   onClick={handleEdit}
-                  className="absolute -bottom-1 -right-1 bg-[#00B4D8] text-white p-1.5 rounded-full shadow-lg hover:bg-[#0077B6] transition-colors"
+                  className="absolute -bottom-1 -right-1 bg-[#00B4D8] text-white p-1.5 rounded-full shadow-lg hover:bg-[#0077B6] transition-colors md:p-2"
                 >
-                  <Edit3 size={12} />
+                  <Edit3 size={12} className="md:w-5 md:h-5" />
                 </button>
               )}
             </div>
+
+            {/* Texte de bienvenue */}
+            <div className="mt-4 md:mt-0">
+              <h1 className="text-3xl font-bold text-[#0077B6] md:text-4xl lg:text-5xl">
+                Bienvenue,
+              </h1>
+              <p className="text-3xl font-bold text-gray-800 md:text-4xl lg:text-5xl">
+                {currentData.firstName}!
+              </p>
+              <p className="text-sm text-gray-500 mt-2 md:text-base">
+                Lundi, Août 19 - 2025
+              </p>
+            </div>
           </div>
 
-          {/* Section du Profil */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+          {/* Colonne de droite: Informations du profil */}
+          <div className="space-y-6 md:border-l md:border-gray-200 md:pl-8  ">
+            <h2 className="text-xl font-semibold text-gray-800 flex md:justify-center gap-2">
               <User size={20} className="text-[#00B4D8]" /> Profil
             </h2>
             <div className="bg-gray-50 rounded-lg p-5 shadow-inner space-y-6">
-              {/* Username */}
-              <div className="flex items-center gap-4">
-                <User size={16} className="text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Nom d'utilisateur
-                  </p>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={currentData.username}
-                      onChange={(e) =>
-                        handleInputChange("username", e.target.value)
-                      }
-                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
-                    />
-                  ) : (
-                    <p className="font-semibold text-gray-800">
-                      {currentData.username}
-                    </p>
-                  )}
+              
+              {/* Grille pour les informations */}
+<div className="flex flex-col space-y-4 md:space-y-6">
+                
+                {/* Champ: Nom d'utilisateur */}
+                <div className="flex items-center gap-4">
+                  <User size={16} className="text-gray-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
+                    <p className="text-sm font-medium text-gray-500">Nom d'utilisateur</p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={currentData.username}
+                        onChange={(e) => handleInputChange("username", e.target.value)}
+                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
+                      />
+                    ) : (
+                      <p className="font-semibold text-gray-800">{currentData.username}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Password */}
-              <div className="flex items-center gap-4">
-                <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
-                  <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
-                  <div className="w-2 h-2 bg-gray-600 rounded-full ml-0.5"></div>
+                {/* Champ: Mot de passe */}
+                <div className="flex items-center gap-4">
+                  <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
+                    <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-gray-600 rounded-full ml-0.5"></div>
+                  </div>
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
+                    <p className="text-sm font-medium text-gray-500">Mot de passe</p>
+                    {isEditing ? (
+                      <input
+                        type="password"
+                        value={currentData.password}
+                        onChange={(e) => handleInputChange("password", e.target.value)}
+                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
+                      />
+                    ) : (
+                      <p className="font-semibold text-gray-800">••••••</p>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Mot de passe
-                  </p>
-                  {isEditing ? (
-                    <input
-                      type="password"
-                      value={currentData.password}
-                      onChange={(e) =>
-                        handleInputChange("password", e.target.value)
-                      }
-                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
-                    />
-                  ) : (
-                    <p className="font-semibold text-gray-800">••••••</p>
-                  )}
-                </div>
-              </div>
 
-              {/* Email */}
-              <div className="flex items-center gap-4">
-                <Mail size={16} className="text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">Email</p>
-                  {isEditing ? (
-                    <input
-                      type="email"
-                      value={currentData.email}
-                      onChange={(e) =>
-                        handleInputChange("email", e.target.value)
-                      }
-                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-40 truncate"
-                    />
-                  ) : (
-                    <p className="font-semibold text-gray-800 truncate">
-                      {currentData.email}
-                    </p>
-                  )}
+                {/* Champ: Email */}
+                <div className="flex items-center gap-4">
+                  <Mail size={16} className="text-gray-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
+                    <p className="text-sm font-medium text-gray-500">Email</p>
+                    {isEditing ? (
+                      <input
+                        type="email"
+                        value={currentData.email}
+                        onChange={(e) => handleInputChange("email", e.target.value)}
+                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto truncate mt-1 sm:mt-0"
+                      />
+                    ) : (
+                      <p className="font-semibold text-gray-800 truncate">{currentData.email}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* First Name */}
-              <div className="flex items-center gap-4">
-                <User size={16} className="text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">Prénom</p>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={currentData.firstName}
-                      onChange={(e) =>
-                        handleInputChange("firstName", e.target.value)
-                      }
-                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
-                    />
-                  ) : (
-                    <p className="font-semibold text-gray-800">
-                      {currentData.firstName}
-                    </p>
-                  )}
+                {/* Champ: Prénom */}
+                <div className="flex items-center gap-4">
+                  <User size={16} className="text-gray-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
+                    <p className="text-sm font-medium text-gray-500">Prénom</p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={currentData.firstName}
+                        onChange={(e) => handleInputChange("firstName", e.target.value)}
+                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
+                      />
+                    ) : (
+                      <p className="font-semibold text-gray-800">{currentData.firstName}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Last Name */}
-              <div className="flex items-center gap-4">
-                <User size={16} className="text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">Nom</p>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={currentData.lastName}
-                      onChange={(e) =>
-                        handleInputChange("lastName", e.target.value)
-                      }
-                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-32"
-                    />
-                  ) : (
-                    <p className="font-semibold text-gray-800">
-                      {currentData.lastName}
-                    </p>
-                  )}
+                {/* Champ: Nom */}
+                <div className="flex items-center gap-4">
+                  <User size={16} className="text-gray-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
+                    <p className="text-sm font-medium text-gray-500">Nom</p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={currentData.lastName}
+                        onChange={(e) => handleInputChange("lastName", e.target.value)}
+                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
+                      />
+                    ) : (
+                      <p className="font-semibold text-gray-800">{currentData.lastName}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Phone */}
-              <div className="flex items-center gap-4">
-                <Phone size={16} className="text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">Téléphone</p>
-                  {isEditing ? (
-                    <input
-                      type="tel"
-                      value={currentData.phone}
-                      onChange={(e) =>
-                        handleInputChange("phone", e.target.value)
-                      }
-                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-40"
-                    />
-                  ) : (
-                    <p className="font-semibold text-gray-800 text-sm">
-                      {currentData.phone}
-                    </p>
-                  )}
+                {/* Champ: Téléphone */}
+                <div className="flex items-center gap-4">
+                  <Phone size={16} className="text-gray-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
+                    <p className="text-sm font-medium text-gray-500">Téléphone</p>
+                    {isEditing ? (
+                      <input
+                        type="tel"
+                        value={currentData.phone}
+                        onChange={(e) => handleInputChange("phone", e.target.value)}
+                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
+                      />
+                    ) : (
+                      <p className="font-semibold text-gray-800 text-sm">{currentData.phone}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Location */}
-              <div className="flex items-center gap-4">
-                <MapPin size={16} className="text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Localisation
-                  </p>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={currentData.location}
-                      onChange={(e) =>
-                        handleInputChange("location", e.target.value)
-                      }
-                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-48"
-                    />
-                  ) : (
-                    <p className="font-semibold text-gray-800 truncate">
-                      {currentData.location}
-                    </p>
-                  )}
+                {/* Champ: Localisation */}
+                <div className="flex items-center gap-4">
+                  <MapPin size={16} className="text-gray-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
+                    <p className="text-sm font-medium text-gray-500">Localisation</p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={currentData.location}
+                        onChange={(e) => handleInputChange("location", e.target.value)}
+                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
+                      />
+                    ) : (
+                      <p className="font-semibold text-gray-800 truncate">{currentData.location}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Surf Level */}
-              <div className="flex items-center gap-4">
-                <Waves size={16} className="text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0 flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Niveau de Surf
-                  </p>
-                  {isEditing ? (
-                    <select
-                      value={currentData.surfLevel}
-                      onChange={(e) =>
-                        handleInputChange("surfLevel", e.target.value)
-                      }
-                      className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8]"
-                    >
-                      <option value="Débutant">Débutant</option>
-                      <option value="Intermédiaire">Intermédiaire</option>
-                      <option value="Avancé">Avancé</option>
-                      <option value="Expert">Expert</option>
-                    </select>
-                  ) : (
-                    <p className="font-semibold text-gray-800">
-                      {currentData.surfLevel}
-                    </p>
-                  )}
+                {/* Champ: Niveau de Surf */}
+                <div className="flex items-center gap-4">
+                  <Waves size={16} className="text-gray-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
+                    <p className="text-sm font-medium text-gray-500">Niveau de Surf</p>
+                    {isEditing ? (
+                      <select
+                        value={currentData.surfLevel}
+                        onChange={(e) => handleInputChange("surfLevel", e.target.value)}
+                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
+                      >
+                        <option value="Débutant">Débutant</option>
+                        <option value="Intermédiaire">Intermédiaire</option>
+                        <option value="Avancé">Avancé</option>
+                        <option value="Expert">Expert</option>
+                      </select>
+                    ) : (
+                      <p className="font-semibold text-gray-800">{currentData.surfLevel}</p>
+                    )}
+                  </div>
                 </div>
+
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* Boutons d'action */}
             {isEditing && (
-              <div className="flex gap-3 mt-4">
+              <div className="flex flex-col sm:flex-row gap-3 mt-4">
                 <button
                   onClick={handleSave}
                   className="flex-1 bg-[#00B4D8] text-white py-2 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-[#0077B6] transition-colors"
@@ -323,22 +288,13 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
-        {/* Footer & Mensaje */}
-        <div className="p-4 text-center text-sm text-gray-500 border-t border-gray-200 pb-10">
-          Bonne session ! 🤙
         </div>
-        </div>
-      {/* Footer en desktop - dentro de la card */}
-      <div className="hidden md:block">
-        <Footer />
-      </div>
-      </div>
 
-
-      {/* Footer flotante en móvil - fuera del contenedor principal */}
-      <div className="md:hidden">
-        <Footer />
-      </div>
-    </div>
+        {/* Pied de page et message */}
+        <div className="p-4 pb-15 md:p-5 text-center text-sm text-gray-500 border-t border-gray-200">
+  Bonne session ! 🤙
+</div>
+             </MainLayout>
+    
   );
 }

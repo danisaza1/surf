@@ -37,7 +37,7 @@ export default function Footer() {
           </li>
           <li className="flex flex-col items-center">
             <Link
-              href="/search"
+              href="/chercher-spot"
               className="flex flex-col items-center text-sm transition-colors hover:text-[#00B4D8]"
             >
               <Search size={24} />
