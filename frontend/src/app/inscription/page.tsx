@@ -11,8 +11,8 @@ return (<>
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   </Head>
   <div className="bg-blue-100">
- 
-<CreateLog/>
+
+    <CreateLog/>
   </div>
 </>)
 ;}
