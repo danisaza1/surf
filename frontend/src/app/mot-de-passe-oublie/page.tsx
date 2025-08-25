@@ -2,65 +2,68 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link"; // Importation du composant Link
-import { Eye, EyeOff } from "lucide-react"; // Ajout d'icônes pour voir le mot de passe
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
+    // Vérification que le mot de passe et la confirmation correspondent
+    if (password !== confirmPassword) {
+      setError("Le mot de passe et la confirmation ne correspondent pas.");
+      return; // Stop le submit - CORRECTION: ça marche maintenant !
+    }
+
+    setLoading(true);
+
     try {
-      // Appel à ton API backend pour vérifier l'email + password
+      // Appel à ton API backend
       const response = await fetch(
         "https://patacoeur-backend.vercel.app/api/adoptant/login/",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         }
       );
 
       const data = await response.json();
-      console.log("Status:", response.status);
-      console.log("Response data:", data);
+      console.log("Status:", response.status, "Response data:", data);
 
       if (response.ok) {
-        // Récupérer le token d'accès depuis la réponse et le stocker
         const { access_token } = data;
         if (access_token) {
-          localStorage.setItem("token", access_token); // Stocker dans localStorage
-          router.push("/volunteer/dashboard");
+          localStorage.setItem("token", access_token);
+          // Navigation programmatique après succès
+          router.push("/validate-password");
         } else {
           setError("Échec de la connexion. Aucune réponse valide du serveur.");
         }
       } else {
-        // Gérer les erreurs de connexion avec un message spécifique
         setError("Échec de la connexion. Vérifiez vos identifiants.");
       }
     } catch (err) {
-      // Gérer les erreurs réseau ou autres
       setError("Erreur de connexion. Veuillez réessayer plus tard.");
       console.error("Login failed:", err);
     } finally {
       setLoading(false);
     }
   };
-        <div className="absolute inset-0 bg-black/50"></div>
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')]">
-      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full border-2 border-gray-100">
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      <div className="relative bg-white rounded-xl shadow-2xl p-8 max-w-md w-full border-2 border-gray-100">
         <h2 className="text-3xl font-bold mb-6 text-center text-[#0096C7]">
           Création nouveau mot de passe
         </h2>
@@ -72,7 +75,7 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          
+          <div>
             <label
               className="block mb-2 font-medium text-[#2D3A40]"
               htmlFor="email"
@@ -80,15 +83,16 @@ export default function Login() {
               Email ou nom d'utilisateur
             </label>
             <div className="relative">
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Votre email ou nom d'utilisateur"
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Votre email ou nom d'utilisateur"
+                required
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              />
+            </div>
           </div>
 
           <div>
@@ -118,21 +122,20 @@ export default function Login() {
             </div>
           </div>
 
-
-           <div>
+          <div>
             <label
               className="block mb-2 font-medium text-[#2D3A40]"
-              htmlFor="password"
+              htmlFor="confirmPassword"
             >
               Confirmation du mot de passe
             </label>
             <div className="relative">
               <input
-                id="password"
+                id="confirmPassword" // ID unique corrigé
                 type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Votre mot de passe"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirmez votre mot de passe"
                 required
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
               />
@@ -145,22 +148,20 @@ export default function Login() {
               </button>
             </div>
           </div>
-
-
-          <Link href="/validate-password" className="w-full">
-            <div className="flex justify-center">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed "
-              >
-                {loading ? "Chargement..." : "Validation du mot de passe"}
-              </button>
-           </div>
-          </Link>
+          {/* je laisse le link pour la présentation front, je l'enlève */}
+        <link href="/validate-password">
+          {/* CORRECTION PRINCIPALE: Supprimer le Link qui wrappait le bouton  on le retrouve dans le if avec router.push */}
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Chargement..." : "Validation du mot de passe"}
+            </button>
+          </div>
+        </link>
         </form>
-
-       
       </div>
     </div>
   );
