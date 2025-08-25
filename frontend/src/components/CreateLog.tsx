@@ -65,7 +65,7 @@ export default function CreateLog() {
   <div className="absolute inset-0 bg-black/50"></div>;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')]">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')] ">
       <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full border-2 border-gray-100">
         <h2 className="text-3xl font-bold mb-6 text-center text-[#0096C7]">
           Creation de compte
