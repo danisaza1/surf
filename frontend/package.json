@@ -16,9 +16,9 @@
     "openmeteo": "^1.2.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-swipeable": "^7.0.2",
-    "react-leaflet": "^5.0.0"
-    },
+    "react-leaflet": "^5.0.0",
+    "react-swipeable": "^7.0.2"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.12",
