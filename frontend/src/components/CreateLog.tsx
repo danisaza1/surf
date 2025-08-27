@@ -26,53 +26,54 @@ export default function CreateLog() {
     hasSpecialChar: false
   });
 
+  
+  // Convertit la chaîne de caractères en tableau de codes ASCII pour la validation
+  const tableau = password.split("").map(char => char.charCodeAt(0));
+  
+  // Fonctions de vérification pour chaque critère
+  const isNumber = (elem: number) => elem > 47 && elem < 58;
+  const isMajuscule = (elem: number) => elem > 64 && elem < 91;
+  const isMinuscule = (elem: number) => elem > 96 && elem < 123;
+  const isSpecialChar = (elem: number) => 
+    (elem > 32 && elem < 48) || 
+  (elem > 57 && elem < 65) || 
+  (elem > 90 && elem < 97) || 
+  (elem > 122 && elem < 127);
+  
+  // Vérifie si chaque critère est respecté
+  const hasNumber = tableau.some(isNumber);
+  const hasUppercase = tableau.some(isMajuscule);
+  const hasLowercase = tableau.some(isMinuscule);
+  const hasSpecialChar = tableau.some(isSpecialChar);
+  const hasMinLength = password.length >= 8;
+  
+  // Détermine la validité globale du mot de passe
+  const isValid = hasNumber && hasUppercase && hasLowercase && hasSpecialChar && hasMinLength;
+  
   // Fonction de validation du mot de passe
   const validatePassword = (password: string) => {
-    // Si la longueur est inférieure à 8, la validation échoue
+    // Si la longueur est inférieure à 8, la validation échoue  je tente sans inclure setPasswordValidation
     if (password.length < 8) {
+      // setPasswordValidation({
+        //   isValid: false,
+        //   hasMinLength: false,
+        //   hasNumber: false,
+        //   hasUppercase: false,
+        //   hasLowercase: false,
+        //   hasSpecialChar: false
+        // });
+        return;
+      }
+      
       setPasswordValidation({
-        isValid: false,
-        hasMinLength: false,
-        hasNumber: false,
-        hasUppercase: false,
-        hasLowercase: false,
-        hasSpecialChar: false
+        isValid,
+        hasMinLength,
+        hasNumber,
+        hasUppercase,
+        hasLowercase,
+        hasSpecialChar
       });
-      return;
-    }
-
-    // Convertit la chaîne de caractères en tableau de codes ASCII pour la validation
-    const tableau = password.split("").map(char => char.charCodeAt(0));
-    
-    // Fonctions de vérification pour chaque critère
-    const isNumber = (elem: number) => elem > 47 && elem < 58;
-    const isMajuscule = (elem: number) => elem > 64 && elem < 91;
-    const isMinuscule = (elem: number) => elem > 96 && elem < 123;
-    const isSpecialChar = (elem: number) => 
-      (elem > 32 && elem < 48) || 
-      (elem > 57 && elem < 65) || 
-      (elem > 90 && elem < 97) || 
-      (elem > 122 && elem < 127);
-
-    // Vérifie si chaque critère est respecté
-    const hasNumber = tableau.some(isNumber);
-    const hasUppercase = tableau.some(isMajuscule);
-    const hasLowercase = tableau.some(isMinuscule);
-    const hasSpecialChar = tableau.some(isSpecialChar);
-    const hasMinLength = password.length >= 8;
-
-    // Détermine la validité globale du mot de passe
-    const isValid = hasNumber && hasUppercase && hasLowercase && hasSpecialChar && hasMinLength;
-
-    setPasswordValidation({
-      isValid,
-      hasMinLength,
-      hasNumber,
-      hasUppercase,
-      hasLowercase,
-      hasSpecialChar
-    });
-  };
+};
 
   // Appelle la validation du mot de passe à chaque changement
   useEffect(() => {
@@ -129,6 +130,17 @@ export default function CreateLog() {
       setLoading(false);
     }
   };
+
+  // modifications du css pour le formulaire
+
+  let validationClasses = "focus:ring-[#00B4D8]"; // valeur par défaut noir
+
+if (password && passwordValidation.isValid) {
+  validationClasses = "border-green-500 text-green-600 focus:ring-green-200";
+} else if (password && !passwordValidation.isValid) {
+  validationClasses = "border-red-500 focus:ring-red-200";
+}
+
 
   return (
     // Conteneur principal avec une mise en page flexible et centrée
@@ -256,7 +268,9 @@ export default function CreateLog() {
           </div>
 
           {/* Champ du mot de passe */}
+
           <div>
+            
             <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="password">
               Mot de passe
             </label>
@@ -268,13 +282,7 @@ export default function CreateLog() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Votre mot de passe"
                 required
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 placeholder:text-gray-400 ${
-                  password && passwordValidation.isValid
-                    ? 'border-green-500 text-green-600 focus:ring-green-200'
-                    : password && !passwordValidation.isValid
-                    ? 'border-red-500 focus:ring-red-200'
-                    : 'focus:ring-[#00B4D8]'
-                }`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 placeholder:text-gray-400 ${validationClasses}`}
               />
               <button
                 type="button"
@@ -329,3 +337,5 @@ export default function CreateLog() {
     </div>
   );
 }
+
+
