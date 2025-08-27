@@ -8,10 +8,13 @@ export default function Home() {
   // largeur du viewport (sert pour la profondeur du cube)
   const [w, setW] = useState(0);
 
-  // angle courant du cube (0° = accueil, 90° = coucou)
+  // angle courant du cube (0° = accueil, -90° = coucou)
   const [angle, setAngle] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [active, setActive] = useState<0 | 1>(0); // face visible (0: accueil, 1: coucou)
+
+  // ref to control the video element
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // refs pour calculer la vélocité du swipe
   const startX = useRef(0);
@@ -27,16 +30,22 @@ export default function Home() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  /** Lance une animation vers 0° ou 90° */
-  const settleTo = (target: 0 | 90) => {
+  /** Lance une animation vers 0° ou -90° */
+  const settleTo = (target: -90 | 0) => {
     setAnimating(true);
     setAngle((prev) => prev); // déclenche transition CSS
-    // on laisse la transition CSS jouer puis on verrouille l'état final
     const dur = 350;
     setTimeout(() => {
       setAnimating(false);
       setAngle(target);
-      setActive(target === 90 ? 1 : 0);
+      setActive(target === -90 ? 1 : 0);
+      if (target === -90) {
+        // Start video when cube settles on the second face
+        videoRef.current?.play().catch((e) => console.error("Video play failed:", e));
+      } else {
+        // Pause video when cube returns to the front face
+        videoRef.current?.pause();
+      }
     }, dur);
   };
 
@@ -58,36 +67,34 @@ export default function Home() {
     velocity.current = (x - lastX.current) / dt; // px/ms
     lastX.current = x;
     lastT.current = now;
-
     // progression en fonction du sens et de la face active
     let progress: number;
     if (active === 0) {
-      // on part de 0° et on va vers 90° avec un swipe gauche (dx négatif)
+      // on part de 0° et on va vers -90° avec un swipe gauche (dx négatif)
       progress = Math.min(1, Math.max(0, -dx / w));
-      setAngle(progress * 90);
+      setAngle(-progress * 90);
     } else {
-      // on part de 90° et on revient à 0° avec swipe droit (dx positif)
+      // on part de -90° et on revient à 0° avec swipe droit (dx positif)
       progress = Math.min(1, Math.max(0, dx / w));
-      setAngle(90 - progress * 90);
+      setAngle(-90 + progress * 90);
     }
   };
 
   const onTouchEnd: React.TouchEventHandler<HTMLDivElement> = () => {
     if (!dragging.current || animating) return;
     dragging.current = false;
-
     // seuil : soit plus de 50% du chemin, soit une vitesse suffisante
     const fast = Math.abs(velocity.current) > 0.8 / 16; // ~0.05 px/ms ≈ 800px/s
     if (active === 0) {
-      const openedEnough = angle > 45;
+      const openedEnough = angle < -45;
       const flung = velocity.current < -0.05; // vers la gauche
-      if (openedEnough || flung) settleTo(90);
+      if (openedEnough || flung) settleTo(-90);
       else settleTo(0);
     } else {
-      const closedEnough = angle < 45;
+      const closedEnough = angle > -45;
       const flung = velocity.current > 0.05; // vers la droite
       if (closedEnough || flung) settleTo(0);
-      else settleTo(90);
+      else settleTo(-90);
     }
   };
 
@@ -95,6 +102,8 @@ export default function Home() {
   const duration = animating ? 350 : 0; // ms (quand on relâche)
   const cubeStyle: React.CSSProperties = {
     transformStyle: "preserve-3d",
+    transform: `translateZ(-${w / 2}px) rotateY(${angle}deg)`,
+    transition: duration ? `transform ${duration}ms cubic-bezier(.22,.61,.36,1)` : undefined,
     width: w || "100vw",
     height: "100vh",
     position: "relative",
@@ -106,9 +115,6 @@ export default function Home() {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    transition: duration
-      ? `transform ${duration}ms cubic-bezier(.22,.61,.36,1)`
-      : undefined, // Apply transition here
   };
 
   return (
@@ -132,8 +138,7 @@ export default function Home() {
           <div
             style={{
               ...faceCommon,
-              transformOrigin: "left", // Set the rotation point
-              transform: `rotateY(${-angle}deg)`, // Rotate based on the current angle
+              transform: `translateZ(${w / 2}px)`,
             }}
           >
             <div className="h-full w-full bg-[url('/surfbg.jpg')] bg-cover bg-center relative flex items-center justify-center">
@@ -159,10 +164,7 @@ export default function Home() {
                   </Link>
                   <p className="text-center text-sm">
                     Vous n&apos;avez pas de compte ? <br />
-                    <Link
-                      href="/inscription"
-                      className="font-semibold underline"
-                    >
+                    <Link href="/inscription" className="font-semibold underline">
                       S&apos;inscrire
                     </Link>
                   </p>
@@ -170,40 +172,33 @@ export default function Home() {
               </div>
             </div>
           </div>
-          {/* FACE DROITE : page noire "Coucou" */}
+          {/* FACE DROITE : Vidéo */}
           <div
             style={{
               ...faceCommon,
-              transformOrigin: "left",
-              transform: `rotateY(${90 - angle}deg)`,
+              transform: `rotateY(90deg) translateZ(${w / 2}px)`,
             }}
           >
             <div className="h-full w-full bg-black text-white flex items-center justify-center relative overflow-hidden">
-              {/* Video Teaser */}
               <video
-                autoPlay
+                ref={videoRef}
                 loop
                 muted
                 playsInline
-                className="absolute top-1/2 left-1/2 w-full h-full object-cover -translate-x-1/2 -translate-y-1/2"
+                className="absolute w-full h-full object-cover"
               >
                 <source src="/teaser.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
               </video>
-
-              {/* Optional: A subtle overlay or text on top of the video */}
-
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                 <p className="text-xl sm:text-2xl font-bold text-white z-10">
                   Discover Waveo
-                </p>{" "}
+                </p>
               </div>
             </div>
           </div>
         </div>
-
         {/* Indice visuel (optionnel) */}
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 text-sm select-none">
+        <div className="absolute bottom-4 right-4 text-white/70 text-sm select-none">
           ↤ swipe
         </div>
       </div>
