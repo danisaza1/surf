@@ -95,8 +95,6 @@ export default function Home() {
   const duration = animating ? 350 : 0; // ms (quand on relâche)
   const cubeStyle: React.CSSProperties = {
     transformStyle: "preserve-3d",
-    transform: `translateZ(-${w / 2}px) rotateY(${angle}deg)`,
-    transition: duration ? `transform ${duration}ms cubic-bezier(.22,.61,.36,1)` : undefined,
     width: w || "100vw",
     height: "100vh",
     position: "relative",
@@ -108,6 +106,9 @@ export default function Home() {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    transition: duration
+      ? `transform ${duration}ms cubic-bezier(.22,.61,.36,1)`
+      : undefined, // Apply transition here
   };
 
   return (
@@ -120,7 +121,7 @@ export default function Home() {
 
       {/* Perspective + gestion tactile */}
       <div
-        className="relative overflow-hidden h-screen [perspective:1000px] touch-pan-y"
+        className="relative h-screen [perspective:1000px] touch-pan-y"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -131,7 +132,8 @@ export default function Home() {
           <div
             style={{
               ...faceCommon,
-              transform: `rotateY(0deg) translateZ(${w / 2}px)`,
+              transformOrigin: "left", // Set the rotation point
+              transform: `rotateY(${-angle}deg)`, // Rotate based on the current angle
             }}
           >
             <div className="h-full w-full bg-[url('/surfbg.jpg')] bg-cover bg-center relative flex items-center justify-center">
@@ -157,7 +159,10 @@ export default function Home() {
                   </Link>
                   <p className="text-center text-sm">
                     Vous n&apos;avez pas de compte ? <br />
-                    <Link href="/inscription" className="font-semibold underline">
+                    <Link
+                      href="/inscription"
+                      className="font-semibold underline"
+                    >
                       S&apos;inscrire
                     </Link>
                   </p>
@@ -165,16 +170,34 @@ export default function Home() {
               </div>
             </div>
           </div>
-
           {/* FACE DROITE : page noire "Coucou" */}
           <div
             style={{
               ...faceCommon,
-              transform: `rotateY(90deg) translateZ(${w / 2}px)`,
+              transformOrigin: "left",
+              transform: `rotateY(${90 - angle}deg)`,
             }}
           >
-            <div className="h-full w-full bg-black text-white flex items-center justify-center">
-              <div className="text-4xl font-bold select-none">Coucou 👋</div>
+            <div className="h-full w-full bg-black text-white flex items-center justify-center relative overflow-hidden">
+              {/* Video Teaser */}
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute top-1/2 left-1/2 w-full h-full object-cover -translate-x-1/2 -translate-y-1/2"
+              >
+                <source src="/teaser.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+
+              {/* Optional: A subtle overlay or text on top of the video */}
+
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                <p className="text-xl sm:text-2xl font-bold text-white z-10">
+                  Discover Waveo
+                </p>{" "}
+              </div>
             </div>
           </div>
         </div>
@@ -187,4 +210,3 @@ export default function Home() {
     </>
   );
 }
-

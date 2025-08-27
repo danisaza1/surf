@@ -212,23 +212,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Champ: Téléphone */}
-                <div className="flex items-center gap-4">
-                  <Phone size={16} className="text-gray-600 flex-shrink-0" />
-                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
-                    <p className="text-sm font-medium text-gray-500">Téléphone</p>
-                    {isEditing ? (
-                      <input
-                        type="tel"
-                        value={currentData.phone}
-                        onChange={(e) => handleInputChange("phone", e.target.value)}
-                        className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
-                      />
-                    ) : (
-                      <p className="font-semibold text-gray-800 text-sm">{currentData.phone}</p>
-                    )}
-                  </div>
-                </div>
+                
 
                 {/* Champ: Localisation */}
                 <div className="flex items-center gap-4">
