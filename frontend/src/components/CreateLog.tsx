@@ -1,12 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import Link from "next/link"; // Importation du composant Link
-import { Eye, EyeOff } from "lucide-react"; // Ajout d'icônes pour voir le mot de passe
+import { Eye, EyeOff } from "lucide-react";
 
 export default function CreateLog() {
-  const router = useRouter();
+  // Définition de l'état du formulaire
   const [prenom, setPrenom] = useState("");
   const [nom, setNom] = useState("");
   const [utilisateur, setUtilisateur] = useState("");
@@ -17,7 +15,7 @@ export default function CreateLog() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // États pour la validation du mot de passe
   const [passwordValidation, setPasswordValidation] = useState({
     isValid: false,
@@ -28,8 +26,9 @@ export default function CreateLog() {
     hasSpecialChar: false
   });
 
-  // Fonction de validation du mot de passe (adaptée de ton code JS)
+  // Fonction de validation du mot de passe
   const validatePassword = (password: string) => {
+    // Si la longueur est inférieure à 8, la validation échoue
     if (password.length < 8) {
       setPasswordValidation({
         isValid: false,
@@ -42,10 +41,10 @@ export default function CreateLog() {
       return;
     }
 
-    // Transforme la string en tableau de codes ASCII
+    // Convertit la chaîne de caractères en tableau de codes ASCII pour la validation
     const tableau = password.split("").map(char => char.charCodeAt(0));
     
-    // Fonctions de vérification (adaptées de ton code)
+    // Fonctions de vérification pour chaque critère
     const isNumber = (elem: number) => elem > 47 && elem < 58;
     const isMajuscule = (elem: number) => elem > 64 && elem < 91;
     const isMinuscule = (elem: number) => elem > 96 && elem < 123;
@@ -55,12 +54,14 @@ export default function CreateLog() {
       (elem > 90 && elem < 97) || 
       (elem > 122 && elem < 127);
 
+    // Vérifie si chaque critère est respecté
     const hasNumber = tableau.some(isNumber);
     const hasUppercase = tableau.some(isMajuscule);
     const hasLowercase = tableau.some(isMinuscule);
     const hasSpecialChar = tableau.some(isSpecialChar);
     const hasMinLength = password.length >= 8;
 
+    // Détermine la validité globale du mot de passe
     const isValid = hasNumber && hasUppercase && hasLowercase && hasSpecialChar && hasMinLength;
 
     setPasswordValidation({
@@ -73,26 +74,19 @@ export default function CreateLog() {
     });
   };
 
-  // Valider le mot de passe à chaque changement
+  // Appelle la validation du mot de passe à chaque changement
   useEffect(() => {
     if (password) {
       validatePassword(password);
     }
   }, [password]);
 
+  // Gestion de la soumission du formulaire
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    // Vérifier la validation du mot de passe avant l'envoi
-    if (!passwordValidation.isValid) {
-      setError("Le mot de passe ne respecte pas les critères requis.");
-      return;
-    }
-
-    setLoading(true);
-
-    // Vérifier la validation du mot de passe avant l'envoi
+    // Vérifie la validité du mot de passe avant d'envoyer
     if (!passwordValidation.isValid) {
       setError("Le mot de passe ne respecte pas les critères requis.");
       return;
@@ -101,9 +95,8 @@ export default function CreateLog() {
     setLoading(true);
 
     try {
-      // Ici tu pourrais appeler ton API d'inscription au lieu de login
       const response = await fetch(
-        "https://patacoeur-backend.vercel.app/api/adoptant/register/", // Changé pour register
+        "https://patacoeur-backend.vercel.app/api/adoptant/register/",
         {
           method: "POST",
           headers: {
@@ -124,11 +117,10 @@ export default function CreateLog() {
       const data = await response.json();
 
       if (response.ok) {
-        // Navigation vers confirmation après succès
-        router.push("/confirmation");
+        // Redirection après un succès, sans utiliser Next.js
+        window.location.href = "/confirmation";
       } else {
-        // Gérer les erreurs de connexion avec un message spécifique
-        setError("Échec de la connexion. Vérifiez vos identifiants.");
+        setError(data.message || "Échec de l'inscription. Vérifiez vos informations.");
       }
     } catch (err) {
       setError("Erreur de connexion. Veuillez réessayer plus tard.");
@@ -139,10 +131,11 @@ export default function CreateLog() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')] ">
-      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full border-2 border-gray-100">
+    // Conteneur principal avec une mise en page flexible et centrée
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')] bg-cover bg-center">
+      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-lg w-full border-2 border-gray-100">
         <h2 className="text-3xl font-bold mb-6 text-center text-[#0096C7]">
-          Creation de compte
+          Création de compte
         </h2>
 
         {error && (
@@ -151,110 +144,119 @@ export default function CreateLog() {
           </div>
         )}
 
+        {/* Le formulaire utilise une grille responsive pour les écrans moyens et plus grands */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="prenom">
-              Prénom :
-            </label>
-            <input
-              id="prenom"
-              type="text"
-              onChange={(e) => setPrenom(e.target.value)}
-              placeholder="Entrez votre prénom"
-              value={prenom}
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="nom">
-              Nom :
-            </label>
-            <input
-              id="nom"
-              type="text"
-              onChange={(e) => setNom(e.target.value)}
-              placeholder="Entrez votre nom"
-              value={nom}
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
-          </div>
-
-          {/* Adresse */}
-          <div>
-            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="adresse">
-              Adresse :
-            </label>
-            <input
-              id="adresse"
-              type="text"
-              onChange={(e) => setAdresse(e.target.value)}
-              placeholder="Entrez votre adresse"
-              value={adresse}
-              required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
-            />
-          </div>
-
-          {/* Niveau de surf */}
-          <div>
-            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="surf">
-              Niveau de surf
-            </label>
-            <select
-              value={surf}
-              onChange={(e) => setSurf(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] text-gray-700"
-            >
-              <option value="" disabled hidden>
-                Sélectionnez votre niveau
-              </option>
-              <option value="Débutant">Débutant</option>
-              <option value="Intermédiaire">Intermédiaire</option>
-              <option value="Avancé">Avancé</option>
-              <option value="Expert">Expert</option>
-            </select>
-          </div>
-
-          {/* Utilisateur / Email */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Grille à deux colonnes pour les champs Prénom et Nom sur les grands écrans */}
+          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 gap-y-4">
             <div>
-              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="utilisateur">
-                Utilisateur
+              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="prenom">
+                Prénom :
               </label>
               <input
-                id="utilisateur"
+                id="prenom"
                 type="text"
-                value={utilisateur}
-                onChange={(e) => setUtilisateur(e.target.value)}
-                placeholder="Votre utilisateur"
+                onChange={(e) => setPrenom(e.target.value)}
+                placeholder="Entrez votre prénom"
+                value={prenom}
                 required
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
               />
             </div>
-
             <div>
-              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="email">
-                Email
+              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="nom">
+                Nom :
               </label>
               <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Votre email"
+                id="nom"
+                type="text"
+                onChange={(e) => setNom(e.target.value)}
+                placeholder="Entrez votre nom"
+                value={nom}
                 required
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
               />
             </div>
           </div>
 
-          {/* Mot de passe */}
+          {/* Grille à deux colonnes pour les champs Adresse et Niveau de surf sur les grands écrans */}
+          <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 gap-y-4">
+            <div>
+              <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="adresse">
+                Adresse :
+              </label>
+              <input
+                id="adresse"
+                type="text"
+                onChange={(e) => setAdresse(e.target.value)}
+                placeholder="Entrez votre adresse"
+                value={adresse}
+                required
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              />
+            </div>
+            <div>
+              <label
+                className="block mb-2 font-medium text-[#2D3A40]"
+                htmlFor="surf"
+              >
+                Niveau du surf
+              </label>
+              <select
+                value={surf}
+                onChange={(e) => setSurf(e.target.value)}
+                required
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] text-gray-700"
+              >
+                <option value="" disabled hidden>
+                  Sélectionnez votre niveau
+                </option>
+                <option value="Débutant">Débutant</option>
+                <option value="Intermédiaire">Intermédiaire</option>
+                <option value="Avancé">Avancé</option>
+                <option value="Expert">Expert</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Les autres champs restent sur une seule colonne */}
           <div>
-            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="password">
+            <label
+              className="block mb-2 font-medium text-[#2D3A40]"
+              htmlFor="utilisateur"
+            >
+              Utilisateur
+            </label>
+            <input
+              id="utilisateur"
+              type="text"
+              value={utilisateur}
+              onChange={(e) => setUtilisateur(e.target.value)}
+              placeholder="Votre utilisateur"
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block mb-2 font-medium text-[#2D3A40]"
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Votre email"
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+            />
+          </div>
+
+          {/* Champ du mot de passe */}
+          <div>
             <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="password">
               Mot de passe
             </label>
@@ -283,9 +285,9 @@ export default function CreateLog() {
               </button>
             </div>
             
-            {/* Indicateurs de validation */}
+            {/* Indicateurs de validation, affichés en une ou deux colonnes selon la taille de l'écran */}
             {password && (
-              <div className="mt-2 text-xs space-y-1">
+              <div className="mt-2 text-xs space-y-1 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                 <div className={passwordValidation.hasMinLength ? 'text-green-600' : 'text-red-600'}>
                   ✓ Au moins 8 caractères
                 </div>
@@ -304,21 +306,25 @@ export default function CreateLog() {
               </div>
             )}
           </div>
-          {/* link a eliminer lorsque le back est installé */}
-          <Link href="/confirmation" className="text-[#0077B6] hover:underline">
-          <div className="flex justify-center pt-4">
-            Vous avez déjà un compte ? Connectez-vous
-          
+
+          {/* Bouton de soumission */}
+          <div className="flex justify-center">
             <button
               type="submit"
               disabled={loading || !passwordValidation.isValid}
               className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-              {loading ? "Chargement..." : "Créer le compte"}
+            >
+              {loading ? "Chargement..." : "Envoyer"}
             </button>
           </div>
-              </Link>
         </form>
+        {/* Lien de connexion pour les utilisateurs existants */}
+        <div className="mt-4 text-center text-gray-600 text-sm">
+          Vous avez déjà un compte ?{' '}
+          <a href="/login" className="text-[#0077B6] hover:underline font-bold">
+            Connectez-vous ici
+          </a>
+        </div>
       </div>
     </div>
   );

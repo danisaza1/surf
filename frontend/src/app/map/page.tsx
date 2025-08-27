@@ -7,7 +7,6 @@ import L from "leaflet";
 import ReactDOMServer from "react-dom/server";
 import Image from "next/image";
 import MainLayout from "@/components/MainLayout";
-import { Main } from "next/document";
 
 
 // Array de spots de surf en Francia (lat/lon)
@@ -45,6 +44,11 @@ export default function SurfMapPage() {
     });
   };
 
+  const currentDate = new Date();
+  const options: Intl.DateTimeFormatOptions = { weekday: 'long'};
+  const today = new Intl.DateTimeFormat('fr-FR', options).format(currentDate).charAt(0).toUpperCase() + new Intl.DateTimeFormat('fr-FR', options).format(currentDate).slice(1);
+
+
   return (
     <>
       <MainLayout>
@@ -57,7 +61,7 @@ export default function SurfMapPage() {
                              Bienvenue, thomas !
                            </h1>
                            <p className="text-sm text-gray-500 mt-1">
-                             Lundi, Août 10 - 2025
+                    {today}, {currentDate.toLocaleDateString()}
                            </p>
                          </div>
                          <div className="relative w-20 h-20 flex-shrink-0">

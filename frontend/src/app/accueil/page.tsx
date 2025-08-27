@@ -20,6 +20,10 @@ export default function ProfilePage() {
 
   const bestSpots = ["Hossegor", "Lacanau", "Biarritz", "Nice"];
 
+  const currentDate = new Date();
+  const options: Intl.DateTimeFormatOptions = { weekday: 'long'};
+  const today = new Intl.DateTimeFormat('fr-FR', options).format(currentDate).charAt(0).toUpperCase() + new Intl.DateTimeFormat('fr-FR', options).format(currentDate).slice(1);
+
   return (
     <>
     <MainLayout>
@@ -34,7 +38,7 @@ export default function ProfilePage() {
                     Bienvenue, {user.name.split(",")[0].trim()} !
                   </h1>
                   <p className="text-sm text-gray-500 mt-1">
-                    Lundi, Août 10 - 2025
+                    {today}, {currentDate.toLocaleDateString()}
                   </p>
                 </div>
                 <div className="relative w-20 h-20 flex-shrink-0">
@@ -103,9 +107,9 @@ export default function ProfilePage() {
                 <p className="text-center">
                   Comment lire des prévisions de surf ?
                 </p>
-                <a href="guide" className="ml-1 text-gray-800 hover:underline">
-                  Consultez notre guide
-                </a>
+                <a href="guide" className="ml-1 text-gray-800 underline md:no-underline md:hover:underline">
+    Consultez notre guide
+</a>
               </div>
             
             </div>

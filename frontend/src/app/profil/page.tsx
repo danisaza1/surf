@@ -62,6 +62,11 @@ export default function ProfilePage() {
 
   const currentData = isEditing ? editedProfile : profile;
 
+   const currentDate = new Date();
+  const options: Intl.DateTimeFormatOptions = { weekday: 'long'};
+  const today = new Intl.DateTimeFormat('fr-FR', options).format(currentDate).charAt(0).toUpperCase() + new Intl.DateTimeFormat('fr-FR', options).format(currentDate).slice(1);
+
+
   return (
        <MainLayout>
        
@@ -99,7 +104,7 @@ export default function ProfilePage() {
                 {currentData.firstName}!
               </p>
               <p className="text-sm text-gray-500 mt-2 md:text-base">
-                Lundi, Août 19 - 2025
+                {today}, {currentDate.toLocaleDateString()}
               </p>
             </div>
           </div>
