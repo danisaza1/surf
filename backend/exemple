@@ -1,23 +1,53 @@
--- Tabla de usuarios
+
+
+
+
+-- Utilisateurs (inscription, login, profil, mot de passe oublié, validate password)
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
+  utilisateur VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   email VARCHAR(100) UNIQUE NOT NULL,
-  first_name VARCHAR(50),
-  last_name VARCHAR(50),
+  prenom VARCHAR(50),
+  nom VARCHAR(50),
   location VARCHAR(100),
   surf_level VARCHAR(20),
-  phone VARCHAR(20),
+  is_verified BOOLEAN DEFAULT FALSE,
+  password_reset_token VARCHAR(255),
   created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Puedes añadir otras tablas, por ejemplo para spots de surf:
+-- Spots de surf (chercher-spot, hotspot, map, accueil)
 CREATE TABLE surf_spots (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  description TEXT,
+  nom VARCHAR(100) NOT NULL,
   location VARCHAR(100),
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  is_hotspot BOOLEAN DEFAULT FALSE,
   created_by INTEGER REFERENCES users(id),
   created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+
+-- Commentaires (confirmation, accueil, profil)
+CREATE TABLE comments (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  spot_id INTEGER REFERENCES surf_spots(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+
+-- Validation d'inscription (confirmation, validate password)
+CREATE TABLE validations (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  token VARCHAR(255) NOT NULL,
+  type VARCHAR(20) NOT NULL, -- 'email', 'password'
+  expires_at TIMESTAMP NOT NULL,
+  used BOOLEAN DEFAULT FALSE
 );
