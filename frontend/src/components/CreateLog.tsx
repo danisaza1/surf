@@ -54,14 +54,7 @@ export default function CreateLog() {
   const validatePassword = (password: string) => {
     // Si la longueur est inférieure à 8, la validation échoue  je tente sans inclure setPasswordValidation
     if (password.length < 8) {
-      // setPasswordValidation({
-        //   isValid: false,
-        //   hasMinLength: false,
-        //   hasNumber: false,
-        //   hasUppercase: false,
-        //   hasLowercase: false,
-        //   hasSpecialChar: false
-        // });
+      
         return;
       }
       
