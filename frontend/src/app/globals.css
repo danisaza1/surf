@@ -12,9 +12,12 @@
   }
 }
 
-body {
-  background: var(--background);
+html, body, #__next {
+  background-color: #0096C7 !important;
+  background: var(--background) url('/brice-de-nice.jpg') center/cover no-repeat;
+
   color: var(--foreground);
   font-family: 'Original Surfer', cursive; /* ✅ ton font */
   @apply overscroll-x-none overflow-x-hidden touch-pan-y;
 }
+  
