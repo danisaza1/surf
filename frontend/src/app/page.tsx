@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useSwipeCube } from "./utils/useSwipeCube";
+import { useSwipeCube } from "../utils/useSwipeCube";
 
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);

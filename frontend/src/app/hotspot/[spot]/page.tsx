@@ -15,37 +15,6 @@ interface SurfSpotData {
   comment: string;
 }
 
-// Mappage des spots avec leurs coordonnées et noms
-const surfSpotsCoordinates: Record<
-  string,
-  { name: string; lat: number; lon: number; webcamImage: string }
-> = {
-  hossegor: {
-    name: "Hossegor",
-    lat: 43.665,
-    lon: -1.4273,
-    webcamImage: "/default-webcam.jpg",
-  },
-  lacanau: {
-    name: "Lacanau",
-    lat: 45.0007,
-    lon: -1.2039,
-    webcamImage: "/default-webcam.jpg",
-  },
-  biarritz: {
-    name: "Biarritz",
-    lat: 43.4832,
-    lon: -1.5586,
-    webcamImage: "/default-webcam.jpg",
-  },
-  nice: {
-    name: "Nice",
-    lat: 43.695,
-    lon: 7.265,
-    webcamImage: "/default-webcam.jpg",
-  },
-};
-
 
 //  Détermine le commentaire de surf en fonction du vent et de la hauteur des vagues.
 const getWeatherComment = (windSpeed: number, waveHeight: number): string => {
@@ -97,16 +66,43 @@ export default async function SpotPage({
 }: {
   params: { spot: string };
 }) {
-  const { spot } = await params;
-  const spotKey = spot.toLowerCase();
-  const spotData = surfSpotsCoordinates[spotKey];
+  const { spot } = await params; 
+  
 
-  // Gérer le cas où le spot n'est pas trouvé
-  if (!spotData) {
+   const geoRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/geocode?place=${encodeURIComponent(spot)}`, {
+    cache: "no-store", // force un nouvel appel
+  });
+  console.log("Réponse de l'API géocodage:", geoRes);
+
+  if (!geoRes.ok) {
     return (
-      <div className="p-10 text-center text-red-600">Spot non trouvé ❌</div>
+      <div className="p-10 text-center text-red-600">
+        Erreur lors de la récupération du spot "{spot}". ❌
+      </div>
     );
   }
+
+  const geoData = await geoRes.json();
+
+  if (!geoData.lat || !geoData.lon) {
+    return (
+      <div className="p-10 text-center text-red-600">
+        Coordonnées introuvables pour "{spot}". ❌
+      </div>
+    );
+  }
+
+   const lat = geoData.lat;
+  const lon = geoData.lon;
+
+
+  // Créer un objet spotData dynamique avec les nouvelles coordonnées
+  const spotData = {
+    name: spot.charAt(0).toUpperCase() + spot.slice(1),
+    lat,
+    lon,
+    webcamImage: "/default-webcam.jpg",
+  };
 
   // Paramètres pour l'API Marine Weather
   const marineParams = {
@@ -169,7 +165,8 @@ export default async function SpotPage({
 
   const windSpeedData = atmosphericHourly.variables(0)?.valuesArray() || [];
   const windDirectionData = atmosphericHourly.variables(1)?.valuesArray() || [];
-  const waterTempData = atmosphericHourly.variables(2)?.valuesArray() || [];
+  const waterTempDataRaw  = atmosphericHourly.variables(2)?.valuesArray() || [];
+  const waterTempData = waterTempDataRaw.map((val) => val / 10);
 
   const surfTimes = [9, 13, 17];
   const spotForecastData: SurfSpotData[] = surfTimes.map((hour) => {

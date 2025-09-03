@@ -16,15 +16,17 @@ export default function RootLayout({
       <head>
         {/* ✅ Google Fonts Embed */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Original+Surfer&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
