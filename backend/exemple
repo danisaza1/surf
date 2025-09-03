@@ -17,17 +17,7 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Spots de surf (chercher-spot, hotspot, map, accueil)
-CREATE TABLE surf_spots (
-  id SERIAL PRIMARY KEY,
-  nom VARCHAR(100) NOT NULL,
-  location VARCHAR(100),
-  latitude DOUBLE PRECISION,
-  longitude DOUBLE PRECISION,
-  is_hotspot BOOLEAN DEFAULT FALSE,
-  created_by INTEGER REFERENCES users(id),
-  created_at TIMESTAMP DEFAULT NOW()
-);
+
 
 
 
@@ -42,12 +32,3 @@ CREATE TABLE comments (
 
 
 
--- Validation d'inscription (confirmation, validate password)
-CREATE TABLE validations (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  token VARCHAR(255) NOT NULL,
-  type VARCHAR(20) NOT NULL, -- 'email', 'password'
-  expires_at TIMESTAMP NOT NULL,
-  used BOOLEAN DEFAULT FALSE
-);
