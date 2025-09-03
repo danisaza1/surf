@@ -80,11 +80,19 @@ export default function Home() {
                       S&apos;inscrire
                     </Link>
                   </p>
+                 
+          <Get />
+           <div className="absolute bottom-4 right-4 text-white/70 text-sm select-none">
+                  swipe ↦
+                </div>
+                <div className="absolute top-4 left-4 text-white/70 text-sm select-none">
+                  1 / 3
+                </div>
+          <div>coucou</div>
                 </div>
               </div>
             </div>
           </div>
-
           {/* FACE DROITE : Vidéo */}
           <div style={getFaceStyle('right')}>
             <div className="h-full w-full bg-black text-white flex items-center justify-center relative overflow-hidden">
