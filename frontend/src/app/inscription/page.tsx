@@ -7,7 +7,7 @@ import {
   getPasswordFieldClasses, 
   getPasswordCriteria,
   type PasswordValidation 
-} from "../utils/password-validator";
+} from "../../utils/password-validator";
 
 export default function CreateLog() {
   // Définition de l'état du formulaire

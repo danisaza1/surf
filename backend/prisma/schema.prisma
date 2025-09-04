@@ -53,7 +53,6 @@ model User {
   // Relaciones
   surf_spots          SurfSpot[]    @relation("UserSurfSpots")
   comments            Comment[]
-  validations         Validation[]
 }
 
 // SURF SPOTS
@@ -85,15 +84,3 @@ model Comment {
   spot     SurfSpot  @relation(fields: [spot_id], references: [id], onDelete: Cascade)
 }
 
-// VALIDATIONS
-model Validation {
-  id        Int      @id @default(autoincrement())
-  user_id   Int
-  token     String
-  type      String   @db.VarChar(20)  // Validación CHECK se maneja en app
-  expires_at DateTime
-  used      Boolean  @default(false)
-
-  // Relación
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-}
