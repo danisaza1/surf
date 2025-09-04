@@ -54,6 +54,38 @@ export const signup = async (req, res) => {
   }
 };
 
+// Changement de mot de passe
+export const changePassword = async (req, res) => {
+  const { email,  newPassword } = req.body;
+
+  if (!email ||  !newPassword)
+    return res.status(400).json({ error: "Champs requis manquants." });
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user)
+      return res.status(404).json({ error: "Utilisateur introuvable." });
+
+    // const valid = await bcrypt.compare(oldPassword, user.passwordHash);
+    // if (!valid)
+    //   return res.status(401).json({ error: "Mot de passe actuel incorrect." });
+
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { email },
+      data: { password: newHashedPassword },
+    });
+
+    res.json({ message: "Mot de passe mis à jour avec succès." });
+  } catch (error) {
+    console.error("Change password error:", error);
+    res.status(500).json({ error: "Erreur serveur." });
+  }
+};
+
+
+
+
 // Connexion
 export const login = async (req, res) => {
   const { email, password } = req.body;

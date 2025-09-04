@@ -54,7 +54,7 @@ export default function ForgottenPassword() {
       const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
      
      const response = await fetch(
-       `${baseUrl}/dog`,
+       `${baseUrl}/change-password`,
        {
          method: "POST",
          headers: { "Content-Type": "application/json" },

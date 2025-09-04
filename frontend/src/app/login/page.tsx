@@ -20,8 +20,10 @@ export default function Login() {
 
     try {
       // Appel à ton API backend pour vérifier l'email + password
+       const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      
       const response = await fetch(
-        "https://patacoeur-backend.vercel.app/api/adoptant/login/",
+        `${baseUrl}/login`,
         {
           method: "POST",
           headers: {
@@ -40,7 +42,7 @@ export default function Login() {
         const { access_token } = data;
         if (access_token) {
           localStorage.setItem("token", access_token); // Stocker dans localStorage
-          router.push("/volunteer/dashboard");
+          router.push("/user/dashboard");
         } else {
           setError("Échec de la connexion. Aucune réponse valide du serveur.");
         }

@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import getRoutes from "./routes/get.js";
-import postRoutes from "./routes/post.js";
+// import postRoutes from "./routes/post.js";
 import authRoutes from "./routes/auth.js";
 import geocodeRouter from "./routes/geocode.js";
 
@@ -17,7 +17,7 @@ app.use(cors({
 
 // Routes GET
 app.use("/", getRoutes);
-app.use("/", postRoutes);
+// app.use("/", postRoutes);
 app.use("/", authRoutes);
 app.use("/api", geocodeRouter);
 
