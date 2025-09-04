@@ -52,8 +52,10 @@ export default function CreateLog() {
     setLoading(true);
 
     try {
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      
       const response = await fetch(
-        "http://localhost:3002/signup",
+        `${baseUrl}/signup`,
         {
           method: "POST",
           headers: {

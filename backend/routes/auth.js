@@ -3,6 +3,7 @@ import { getLatestUser } from "../controllers/authController.js";
 
 import {
   signup,
+  changePassword
 //   login,
 //   refreshToken,
 //   logout,
@@ -11,6 +12,7 @@ import {
 const router = express.Router();
 
 router.post('/signup', signup);
+router.patch('/change-password', changePassword);
 // router.post('/login', login);
 // router.post('/refresh-token', refreshToken); 
 // router.post('/logout', logout); 
