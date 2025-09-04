@@ -53,7 +53,7 @@ export default function CreateLog() {
 
     try {
       const response = await fetch(
-        "https://patacoeur-backend.vercel.app/api/adoptant/register/",
+        "http://localhost:3002/signup",
         {
           method: "POST",
           headers: {

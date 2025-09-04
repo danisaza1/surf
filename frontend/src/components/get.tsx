@@ -21,8 +21,10 @@ export default function Get() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await fetch('http://localhost:3002/dog');
-        
+        //ici j'ai changé le localhost par window.location pour que ça marche sur les mobiles. la const baseUrl permet de récupérer le protocole et le nom d'hôte actuels, puis d'ajouter le port 3002.
+       const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+       const res = await fetch(`${baseUrl}/dog`);
+
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
@@ -32,7 +34,7 @@ export default function Get() {
         setData(result);
       } catch (err) {
         console.error('Fetch error:', err);
-        setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+        setError(JSON.stringify(err));
       } finally {
         setLoading(false);
       }
