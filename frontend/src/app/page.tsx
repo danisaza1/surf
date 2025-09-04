@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useSwipeCube } from "../utils/useSwipeCube";
+import Get from "@/components/get";
 
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -80,14 +81,9 @@ export default function Home() {
                       S&apos;inscrire
                     </Link>
                   </p>
-                 
-          <Get />
-           <div className="absolute bottom-4 right-4 text-white/70 text-sm select-none">
-                  swipe ↦
-                </div>
-                <div className="absolute top-4 left-4 text-white/70 text-sm select-none">
-                  1 / 3
-                </div>
+
+         <Get />
+
           <div>coucou</div>
                 </div>
               </div>
