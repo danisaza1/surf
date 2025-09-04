@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import getRoutes from "./routes/get.js";
 import postRoutes from "./routes/post.js";
-
+import authRoutes from "./routes/auth.js";
 const port = 3002;
 const app = express();
 
@@ -16,6 +16,7 @@ app.use(cors({
 // Routes GET
 app.use("/", getRoutes);
 app.use("/", postRoutes);
+app.use("/", authRoutes);
 
 
 
