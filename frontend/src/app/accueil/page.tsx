@@ -1,8 +1,10 @@
+'use client';
 // app/profile/page.tsx
 import Image from "next/image";
 import { User, MapPin, Waves, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import MainLayout from "@/components/MainLayout";
+import { useState, useEffect } from 'react';
 
 // Optionnel: Définir l'interface
 interface UserProfile {
@@ -12,11 +14,33 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-  const user: UserProfile = {
-    name: "BOSS, Albert",
-    location: "Promenade des Anglais, Nice",
-    surfLevel: "Intermédiaire",
-  };
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+        const response = await fetch(`${baseUrl}/users`);
+        const userData = await response.json();
+        setUser(userData);
+      } catch (error) {
+        console.error('Erreur:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProfile();
+  }, []);
+
+  if (loading) {
+    return <div>Chargement...</div>;
+  }
+
+  if (!user) {
+    return <div>Erreur lors du chargement du profil</div>;
+  }
 
   const bestSpots = ["Hossegor", "Lacanau", "Biarritz", "Nice"];
 
@@ -35,7 +59,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between pb-4 border-b border-gray-200">
                 <div>
                   <h1 className="text-3xl text-[#0077B6]">
-                    Bienvenue, {user.name.split(",")[0].trim()} !
+                    {/* Bienvenue, {user.name.split(",")[0].trim()} ! */}
                   </h1>
                   <p className="text-sm text-gray-500 mt-1">
                     {today}, {currentDate.toLocaleDateString()}

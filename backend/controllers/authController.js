@@ -95,7 +95,7 @@ export const login = async (req, res) => {
     if (!user)
       return res.status(404).json({ error: "Utilisateur introuvable." });
 
-    const valid = await bcrypt.compare(password, user.passwordHash);
+    const valid = await bcrypt.compare(password, user.password);
     if (!valid)
       return res.status(401).json({ error: "Mot de passe incorrect." });
 

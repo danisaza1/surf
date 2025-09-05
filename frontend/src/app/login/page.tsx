@@ -39,10 +39,10 @@ export default function Login() {
 
       if (response.ok) {
         // Récupérer le token d'accès depuis la réponse et le stocker
-        const { access_token } = data;
-        if (access_token) {
-          localStorage.setItem("token", access_token); // Stocker dans localStorage
-          router.push("/user/dashboard");
+        const { accessToken } = data;
+        if (accessToken) {
+          localStorage.setItem("token", accessToken); // Stocker dans localStorage
+          router.push("/accueil"); // Rediriger vers la page d'accueil
         } else {
           setError("Échec de la connexion. Aucune réponse valide du serveur.");
         }
@@ -128,7 +128,7 @@ export default function Login() {
             </Link>
           </div>
 
-            <Link href="/accueil">
+          
             <button
               type="submit"
               disabled={loading}
@@ -136,7 +136,7 @@ export default function Login() {
             >
               {loading ? "Chargement..." : "Je me connecte"}
             </button>
-            </Link>
+          
         </form>
 
         <div className="mt-6 text-center">
