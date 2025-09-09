@@ -9,7 +9,7 @@ import {
   getPasswordFieldClasses, 
   getPasswordCriteria,
   type PasswordValidation 
-} from "../utils/password-validator";
+} from "../../utils/password-validator";
 
 
 export default function ForgottenPassword() {
@@ -51,8 +51,10 @@ export default function ForgottenPassword() {
  
    try {
      // Appel à ton API backend
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+     
      const response = await fetch(
-       "https://patacoeur-backend.vercel.app/api/adoptant/login/",
+       `${baseUrl}/change-password`,
        {
          method: "POST",
          headers: { "Content-Type": "application/json" },

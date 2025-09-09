@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
 // Route GET /users
 router.get("/users", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM users");
+    const result = await pool.query("SELECT * FROM user");
     res.json(result.rows);
   } catch (err) {
     console.error(err);

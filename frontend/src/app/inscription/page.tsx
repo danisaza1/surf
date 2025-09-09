@@ -50,10 +50,11 @@ export default function CreateLog() {
     }
 
     setLoading(true);
-
     try {
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      
       const response = await fetch(
-        "https://patacoeur-backend.vercel.app/api/adoptant/register/",
+        `${baseUrl}/signup`,
         {
           method: "POST",
           headers: {
@@ -79,15 +80,12 @@ export default function CreateLog() {
       } else {
         setError(data.message || "Échec de l'inscription. Vérifiez vos informations.");
       }
-    } catch (err) {
-      setError("Erreur de connexion. Veuillez réessayer plus tard.");
-      console.error("Registration failed:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Récupère les critères de validation pour l'affichage
+  // Récupère les critères de validation pour l'affichage depuis le fichier utils/password-validator.ts
   const passwordCriteria = getPasswordCriteria();
 
   return (

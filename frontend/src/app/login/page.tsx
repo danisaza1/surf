@@ -20,8 +20,10 @@ export default function Login() {
 
     try {
       // Appel à ton API backend pour vérifier l'email + password
+       const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      
       const response = await fetch(
-        "https://patacoeur-backend.vercel.app/api/adoptant/login/",
+        `${baseUrl}/login`,
         {
           method: "POST",
           headers: {
@@ -32,31 +34,22 @@ export default function Login() {
       );
 
       const data = await response.json();
-      console.log("Status:", response.status);
-      console.log("Response data:", data);
-
+  
       if (response.ok) {
         // Récupérer le token d'accès depuis la réponse et le stocker
-        const { access_token } = data;
-        if (access_token) {
-          localStorage.setItem("token", access_token); // Stocker dans localStorage
-          router.push("/volunteer/dashboard");
+        const { accessToken } = data;
+        if (accessToken) {
+          localStorage.setItem("accessToken", accessToken); // Stocker dans localStorage
+          router.push("/accueil"); // Rediriger vers la page d'accueil
         } else {
           setError("Échec de la connexion. Aucune réponse valide du serveur.");
         }
-      } else {
-        // Gérer les erreurs de connexion avec un message spécifique
-        setError("Échec de la connexion. Vérifiez vos identifiants.");
-      }
-    } catch (err) {
-      // Gérer les erreurs réseau ou autres
-      setError("Erreur de connexion. Veuillez réessayer plus tard.");
-      console.error("Login failed:", err);
+          }
+   
     } finally {
       setLoading(false);
     }
   };
-  <div className="absolute inset-0 bg-black/50"></div>;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')]">
@@ -125,8 +118,6 @@ export default function Login() {
               Mot de passe oublié ?
             </Link>
           </div>
-
-            <Link href="/accueil">
             <button
               type="submit"
               disabled={loading}
@@ -134,9 +125,7 @@ export default function Login() {
             >
               {loading ? "Chargement..." : "Je me connecte"}
             </button>
-            </Link>
         </form>
-
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Pas encore inscrit ?{" "}
@@ -152,3 +141,7 @@ export default function Login() {
     </div>
   );
 }
+
+          
+          
+
