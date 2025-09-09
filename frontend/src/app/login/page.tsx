@@ -41,7 +41,7 @@ export default function Login() {
         // Récupérer le token d'accès depuis la réponse et le stocker
         const { accessToken } = data;
         if (accessToken) {
-          localStorage.setItem("token", accessToken); // Stocker dans localStorage
+          localStorage.setItem("accessToken", accessToken); // Stocker dans localStorage
           router.push("/accueil"); // Rediriger vers la page d'accueil
         } else {
           setError("Échec de la connexion. Aucune réponse valide du serveur.");

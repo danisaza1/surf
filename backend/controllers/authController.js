@@ -2,19 +2,25 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
+
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "patron";
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || "patron";
 const REFRESH_SECRET = process.env.REFRESH_SECRET || "refreshtoken_secret";
 
 // Génère un token JWT
 const generateAccessToken = (user) =>
   jwt.sign(
     {
-      id: user.id,           
-      email: user.email, 
+      id: user.id,
+      email: user.email,
       role: user.role,
+      prenom: user.prenom,
+      nom: user.nom,
+      adresse: user.location,
+      surf: user.surf_level,
+      utilisateur: user.username,
     },
-    JWT_SECRET,
+    ACCESS_TOKEN_SECRET,
     { expiresIn: "1h" }
   );
 
@@ -88,6 +94,7 @@ export const changePassword = async (req, res) => {
 
 // Connexion
 export const login = async (req, res) => {
+  console.log("coucou login")
   const { email, password } = req.body;
 
   try {
@@ -102,6 +109,8 @@ export const login = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
+    // Backend - route pour récupérer le profil utilisateur authentifié
+    
     // 🍪 Stocker le refreshToken dans le cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -116,9 +125,9 @@ export const login = async (req, res) => {
         id: user.id,
         prenom: user.prenom,
         nom: user.nom,
-        adresse: user.adresse,
-        surf: user.surf,
-        utilisateur: user.utilisateur,
+        adresse: user.location,
+        surf: user.surf_level,
+        utilisateur: user.username,
         email: user.email,
         role: user.role,
       },
@@ -175,16 +184,22 @@ export const getLatestUser = async(req, res) => {
   try {
     const latestUser = await prisma.user.findFirst({
       orderBy: {
-        createdAt: "desc"
+        created_at: "desc"
       },
       select: {
+        id: true,
+          nom: true,
         prenom: true,
-        nom: true,
-        adresse: true,
-        surf: true,
-        utilisateur: true,
+        location: true,
+        surf_level: true,
+        username: true,
         email: true,
-        role: true
+        role: true,
+        location: true,
+        surf_level: true,
+      
+        password: true,
+     
       }
     });
 
@@ -195,6 +210,74 @@ export const getLatestUser = async(req, res) => {
     res.json(latestUser);
   } catch (error) {
     console.error("Erreur récupération dernier utilisateur :", error);
+    res.status(500).json({ error: "Erreur serveur." });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  console.log('Récupération du profil utilisateur...');
+  const accessToken = req.headers['authorization']?.split(' ')[1];
+  try {
+    console.log('req.user:', req.user); // Debug
+    console.log('req.headers:', req.headers); // Debug
+
+      if (!accessToken) {
+    console.log("Aucun token fourni.");
+    return res.sendStatus(401);
+  }
+
+  
+    
+    const userId = req.user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ 
+        error: "Token d'authentification invalide ou manquant.",
+        debug: "req.user est undefined" 
+      });
+    }
+
+      jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      console.log("Token invalide ou expiré:", err);
+      return res.sendStatus(403);
+    }
+    console.log("Utilisateur décodé:", user); // Debug
+    req.user = user; // Attache l'utilisateur à la requête
+    //next();
+  });
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        prenom: true,
+        nom: true,
+        location: true,
+        surf_level: true,
+        username: true,
+        email: true,
+        role: true,
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur introuvable." });
+    }
+
+    res.json({
+      id: user.id,
+      prenom: user.prenom,
+      nom: user.nom,
+      adresse: user.location,
+      surf: user.surf_level,
+      utilisateur: user.username,
+      email: user.email,
+      role: user.role,
+    });
+
+  } catch (error) {
+    console.error("Get profile error:", error);
     res.status(500).json({ error: "Erreur serveur." });
   }
 };
