@@ -22,6 +22,12 @@ export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    window.location.href = '/login'; // Rediriger vers la page de login
+  }
+
 useEffect(() => {
   async function fetchProfile() {
     const token = localStorage.getItem("accessToken");
@@ -167,6 +173,9 @@ useEffect(() => {
         </div>
       </div>
 
+     <button className="p-4 pb-15 md:p-5 text-center text-sm text-gray-500 border-t border-gray-200"
+      onClick={handleLogout}>logout</button>
+      
       <div className="p-4 pb-15 md:p-5 text-center text-sm text-gray-500 border-t border-gray-200">
         Bonne session ! 🤙
       </div>

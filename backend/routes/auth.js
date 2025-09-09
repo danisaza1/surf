@@ -7,9 +7,8 @@ import {
   login,
   
   refreshToken,
-//   logout,
+
 } from '../controllers/authController.js';
-console.log('authRoutes loaded sir'); // Debug
 
 const router = express.Router();
 
