@@ -38,52 +38,56 @@ export default function ForgottenPassword() {
  }, [password]);
 
  const handleSubmit = async (e: React.FormEvent) => {
-   e.preventDefault();
-   setError(null);
+  e.preventDefault();
+  setError(null);
 
-   // Vérification que le mot de passe et la confirmation correspondent
-   if (password !== confirmPassword) {
-     setError("Le mot de passe et la confirmation ne correspondent pas.");
-     return; // Stop le submit - CORRECTION: ça marche maintenant !
-   }
-   
-   setLoading(true);
- 
-   try {
-     // Appel à ton API backend
-      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
-     
-     const response = await fetch(
-       `${baseUrl}/change-password`,
-       {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ email, password }),
-       }
-     );
+  // Vérification de la validation du mot de passe
+  if (!passwordValidation.isValid) {
+    setError("Le mot de passe ne respecte pas les critères requis.");
+    return;
+  }
 
-     const data = await response.json();
-     console.log("Status:", response.status, "Response data:", data);
+  // Vérification que le mot de passe et la confirmation correspondent
+  if (password !== confirmPassword) {
+    setError("Le mot de passe et la confirmation ne correspondent pas.");
+    return;
+  }
+  
+  setLoading(true);
 
-     if (response.ok) {
-       const { access_token } = data;
-       if (access_token) {
-         localStorage.setItem("token", access_token);
-         // Navigation programmatique après succès
-         router.push("/validate-password");
-       } else {
-         setError("Échec de la connexion. Aucune réponse valide du serveur.");
-       }
-     } else {
-       setError("Échec de la connexion. Vérifiez vos identifiants.");
-     }
-   } catch (err) {
-     setError("Erreur de connexion. Veuillez réessayer plus tard.");
-     console.error("Login failed:", err);
-   } finally {
-     setLoading(false);
-   }
-}
+  try {
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+    
+    const response = await fetch(`${baseUrl}/change-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, newPassword: password }),
+    });
+
+    const data = await response.json();
+    console.log("Status:", response.status, "Response data:", data);
+
+    if (response.ok) {
+      // CORRECTION: Vérifier data.success au lieu de chercher access_token
+      if (data.success) {
+        console.log("Mot de passe changé avec succès");
+        // Navigation vers la page de validation
+        router.push("/validate-password");
+      } else {
+        setError(data.message || "Échec du changement de mot de passe.");
+      }
+    } else {
+      // Utiliser le message d'erreur du serveur si disponible
+      setError(data.error || "Échec du changement de mot de passe. Vérifiez vos informations.");
+    }
+  } catch (err) {
+    setError("Erreur de connexion. Veuillez réessayer plus tard.");
+    console.error("Change password failed:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 // modifications du css pour le formulaire
 const passwordCriteria = getPasswordCriteria();
 
@@ -188,7 +192,7 @@ return (
           </div>
         </div>
         {/* je laisse le link pour la présentation front, je l'enlève */}
-      <Link href="/validate-password">
+     
         {/* CORRECTION PRINCIPALE: Supprimer le Link qui wrappait le bouton  on le retrouve dans le if avec router.push */}
         <div className="flex justify-center">
           <button
@@ -199,7 +203,7 @@ return (
             {loading ? "Chargement..." : "Validation du mot de passe"}
           </button>
         </div>
-      </Link>
+     
       </form>
     </div>
   </div>

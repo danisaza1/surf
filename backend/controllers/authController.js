@@ -61,34 +61,78 @@ export const signup = async (req, res) => {
 };
 
 // Changement de mot de passe
+// BACKEND AVEC DEBUG DÉTAILLÉ
+// BACKEND CORRIGÉ - Utiliser "password" au lieu de "passwordHash"
 export const changePassword = async (req, res) => {
-  const { email,  newPassword } = req.body;
-
-  if (!email ||  !newPassword)
+  console.log("=== DÉBUT changePassword ===");
+  console.log("Body reçu:", req.body);
+  
+  const { email, newPassword } = req.body;
+  
+  if (!email || !newPassword) {
+    console.log("❌ Champs manquants - email:", email, "newPassword:", !!newPassword);
     return res.status(400).json({ error: "Champs requis manquants." });
+  }
+
+  console.log("✅ Champs présents - email:", email);
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user)
-      return res.status(404).json({ error: "Utilisateur introuvable." });
-
-    // const valid = await bcrypt.compare(oldPassword, user.passwordHash);
-    // if (!valid)
-    //   return res.status(401).json({ error: "Mot de passe actuel incorrect." });
-
-    const newHashedPassword = await bcrypt.hash(newPassword, 10);
-    await prisma.user.update({
+    // 1. Vérifier la connexion Prisma
+    console.log("🔍 Recherche de l'utilisateur...");
+    const user = await prisma.user.findUnique({ 
       where: { email },
-      data: { password: newHashedPassword },
+      select: {
+        id: true,
+        email: true,
+        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
+      }
+    });
+    
+    if (!user) {
+      console.log("❌ Utilisateur non trouvé pour email:", email);
+      return res.status(404).json({ error: "Utilisateur introuvable." });
+    }
+    
+    console.log("✅ Utilisateur trouvé - ID:", user.id);
+    console.log("📝 Ancien hash (premiers 20 chars):", user.password?.substring(0, 20) + "...");
+
+    // 2. Hasher le nouveau mot de passe
+    console.log("🔐 Hashage du nouveau mot de passe...");
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log("✅ Nouveau hash généré (premiers 20 chars):", newHashedPassword.substring(0, 20) + "...");
+
+    // 3. Mise à jour en base
+    console.log("💾 Mise à jour en base de données...");
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: { password: newHashedPassword }, // ← CORRECTION: "password" au lieu de "passwordHash"
+      select: {
+        id: true,
+        email: true,
+        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
+      }
     });
 
-    res.json({ message: "Mot de passe mis à jour avec succès." });
+    console.log("✅ Mise à jour réussie");
+    console.log("📝 Hash final (premiers 20 chars):", updatedUser.password.substring(0, 20) + "...");
+    
+    res.json({ 
+      message: "Mot de passe mis à jour avec succès.",
+      success: true 
+    });
+
   } catch (error) {
-    console.error("Change password error:", error);
-    res.status(500).json({ error: "Erreur serveur." });
+    console.error("💥 ERREUR DÉTAILLÉE:");
+    console.error("- Message:", error.message);
+    console.error("- Code:", error.code);
+    console.error("- Stack:", error.stack);
+    
+    res.status(500).json({ 
+      error: "Erreur serveur.",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
-
 
 
 
