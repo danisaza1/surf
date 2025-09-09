@@ -4,6 +4,7 @@ import cors from "cors";
 import getRoutes from "./routes/get.js";
 import postRoutes from "./routes/post.js";
 import geocodeRouter from "./routes/geocode.js";
+import favoritesRoutes from "./routes/favorites.js";
 
 const port = 3002;
 const app = express();
@@ -18,6 +19,7 @@ app.use(cors({
 app.use("/", getRoutes);
 app.use("/", postRoutes);
 app.use("/api", geocodeRouter);
+app.use("/api", favoritesRoutes)
 
 
 
