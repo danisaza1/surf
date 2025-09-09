@@ -66,7 +66,7 @@ export default function SurfMapPage() {
                          </div>
                          <div className="relative w-20 h-20 flex-shrink-0">
                            <Image
-                             src="/profile.png"
+                             src="/profile.jpg"
                              alt="Profile"
                              fill
                              sizes="(max-width: 768px) 100vw,
