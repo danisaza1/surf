@@ -1,11 +1,7 @@
-// Dans votre fichier: backend/routes/geocode.js
-
 import express from "express";
 import fetch from "node-fetch";
 
 const router = express.Router();
-
-// Middleware spécifiques à ce routeur si nécessaire
 router.use(express.json());
 
 // Endpoint d'API pour le géocodage
@@ -43,9 +39,11 @@ router.get("/geocode", async (req, res) => {
     if (data && data.length > 0) {
       const location = data[0];
       res.json({
+        key: location.place_id.toString(),
         lat: parseFloat(location.lat),
         lon: parseFloat(location.lon),
-        name: location.display_name,
+        location: location.display_name,
+        name : location.name
       });
     } else {
       res.status(404).json({ error: "Lieu non trouvé." });

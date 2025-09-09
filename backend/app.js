@@ -5,6 +5,7 @@ import getRoutes from "./routes/get.js";
 // import postRoutes from "./routes/post.js";
 import authRoutes from "./routes/auth.js";
 import geocodeRouter from "./routes/geocode.js";
+import favoritesRoutes from "./routes/favorites.js";
 
 const port = 3002;
 const app = express();
@@ -20,6 +21,7 @@ app.use("/", getRoutes);
 // app.use("/", postRoutes);
 app.use("/", authRoutes);
 app.use("/api", geocodeRouter);
+app.use("/api", favoritesRoutes)
 
 
 
