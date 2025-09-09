@@ -46,6 +46,9 @@ export default function ProfilePage() {
                     src="/profile.png"
                     alt="Profile"
                     fill
+                    sizes="(max-width: 768px) 100vw,
+               (max-width: 1200px) 50vw,
+               33vw"
                     className="rounded-full border-4 border-[#00B4D8] shadow-lg object-cover"
                   />
                 </div>
