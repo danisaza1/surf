@@ -54,11 +54,9 @@ export default function FindSpotPage() {
 
     try {
       // Llama a la API de geocodificación en el backend
-
+const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
       const response = await fetch(`
-          ${
-            process.env.NEXT_PUBLIC_API_URL
-          }/api/geocode?place=${encodeURIComponent(placeToSearch)}`);
+        ${baseUrl}/api/geocode?place=${encodeURIComponent(placeToSearch)}`);
 
       if (!response.ok) {
         const errorData = await response.json();
