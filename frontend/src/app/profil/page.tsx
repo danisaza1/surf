@@ -30,20 +30,16 @@ interface UserProfile {
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
- const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [editedProfile, setEditedProfile] = useState<UserProfile | null>(null);
- 
   const [loading, setLoading] = useState(true);
-
-
-  // ✅ El estado ahora es un array de objetos FavoriteSpot
+  // ✅ E estado ahora es un array de objetos FavoriteSpot
   const [user, setUser] = useState<UserProfile | null>(null);
-
   const [favorites, setFavorites] = useState<FavoriteSpot[]>([]);
   const [editedFavorites, setEditedFavorites] = useState<FavoriteSpot[]>([]);
   const [removedFavoriteIds, setRemovedFavoriteIds] = useState<string[]>([]);
 
-    // Récupérer le profil utilisateur
+  // Récupérer le profil utilisateur
   useEffect(() => {
     async function fetchProfile() {
       const token = localStorage.getItem("accessToken");
@@ -55,11 +51,12 @@ export default function ProfilePage() {
         const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
         const response = await fetch(`${baseUrl}/profile`, {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
-        if (!response.ok) throw new Error("Erreur lors du chargement du profil");
+        if (!response.ok)
+          throw new Error("Erreur lors du chargement du profil");
         const userData = await response.json();
         setProfile(userData);
         setEditedProfile(userData);
@@ -72,7 +69,7 @@ export default function ProfilePage() {
     fetchProfile();
   }, []);
 
-// second useEffect pour récupérer les favoris
+  // second useEffect pour récupérer les favoris
   // Fetch user profile on component mount
   useEffect(() => {
     const fetchProfile = async () => {
@@ -147,44 +144,44 @@ export default function ProfilePage() {
   };
 
   const handleSave = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!user || !editedProfile) {
-    console.error("Vous devez être connecté pour sauvegarder votre profil.");
-    return;
-  }
-
-  try {
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
-    const res = await fetch(`${baseUrl}/api/profile`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // ⚠️ tu utilisais "token" au lieu de "accessToken"
-      },
-      body: JSON.stringify({
-        ...editedProfile,
-        removedFavorites: removedFavoriteIds, // si tu veux aussi envoyer les favoris supprimés
-      }),
-    });
-
-         if (res.ok) {
-      const updatedUser = await res.json();
-      setUser(updatedUser);
-      setEditedProfile(updatedUser);
-      setFavorites((prev) =>
-        prev.filter((fav) => !removedFavoriteIds.includes(fav.api_place_id))
-      );
-      setRemovedFavoriteIds([]);
-      setIsEditing(false);
-      console.log("Profil mis à jour avec succès !");
-    } else {
-      const errorData = await res.json();
-      console.error(errorData.error || "Échec de la mise à jour du profil.");
+    e.preventDefault();
+    if (!user || !editedProfile) {
+      console.error("Vous devez être connecté pour sauvegarder votre profil.");
+      return;
     }
-  } catch (error) {
-    console.error("Erreur lors de la sauvegarde du profil:", error);
-  }
-};
+
+    try {
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      const res = await fetch(`${baseUrl}/api/profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // ⚠️ tu utilisais "token" au lieu de "accessToken"
+        },
+        body: JSON.stringify({
+          ...editedProfile,
+          removedFavorites: removedFavoriteIds, // si tu veux aussi envoyer les favoris supprimés
+        }),
+      });
+
+      if (res.ok) {
+        const updatedUser = await res.json();
+        setUser(updatedUser);
+        setEditedProfile(updatedUser);
+        setFavorites((prev) =>
+          prev.filter((fav) => !removedFavoriteIds.includes(fav.api_place_id))
+        );
+        setRemovedFavoriteIds([]);
+        setIsEditing(false);
+        console.log("Profil mis à jour avec succès !");
+      } else {
+        const errorData = await res.json();
+        console.error(errorData.error || "Échec de la mise à jour du profil.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde du profil:", error);
+    }
+  };
 
   const handleCancel = () => {
     setEditedProfile(user);
@@ -196,7 +193,6 @@ export default function ProfilePage() {
   const handleInputChange = (field: keyof UserProfile, value: string) => {
     setEditedProfile((prev) => (prev ? { ...prev, [field]: value } : null));
   };
-
 
   const currentData = isEditing ? editedProfile : profile;
   const router = useRouter();

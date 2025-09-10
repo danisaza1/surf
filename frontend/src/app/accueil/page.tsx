@@ -9,12 +9,12 @@ import Image from "next/image";
 // Interface adaptée
 interface UserProfile {
   id: number;
+  username: string;
+  email: string;
   prenom: string;
   nom: string;
-  adresse: string;
-  surf: string;
-  utilisateur: string;
-  email: string;
+  location: string;
+  surf_level: string;
   role: string;
 }
 
@@ -103,7 +103,7 @@ export default function ProfilePage() {
             <div className="flex items-center justify-between w-full">
               <div>
                 <h1 className="text-3xl text-[#0077B6]">
-                  Bienvenue, {user.utilisateur}
+                  Bienvenue, {user?.username}
                 </h1>
                 <p className="text-sm text-gray-500 mt-1">
                   {today}, {currentDate.toLocaleDateString()}
@@ -139,7 +139,7 @@ export default function ProfilePage() {
                   <p className="text-sm font-medium text-gray-500">
                     Localisation
                   </p>
-                  <p className="text-gray-800">{user.adresse}</p>
+                  <p className="text-gray-800">{user.location}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -148,7 +148,7 @@ export default function ProfilePage() {
                   <p className="text-sm font-medium text-gray-500">
                     Niveau de Surf
                   </p>
-                  <p className="text-gray-800">{user.surf}</p>
+                  <p className="text-gray-800">{user.surf_level}</p>
                 </div>
               </div>
             </div>
