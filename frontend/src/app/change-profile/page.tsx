@@ -9,7 +9,7 @@ import {
   type PasswordValidation 
 } from "../../utils/password-validator";
 
-export default function CreateLog() {
+export default function changeProfile() {
   // Définition de l'état du formulaire
   const [prenom, setPrenom] = useState("");
   const [nom, setNom] = useState("");
@@ -18,47 +18,59 @@ export default function CreateLog() {
   const [surf, setSurf] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // État pour la validation du mot de passe
-  const [passwordValidation, setPasswordValidation] = useState<PasswordValidation>({
-    isValid: false,
-    hasMinLength: false,
-    hasNumber: false,
-    hasUppercase: false,
-    hasLowercase: false,
-    hasSpecialChar: false
-  });
 
-  // Met à jour la validation du mot de passe à chaque changement
   useEffect(() => {
-    const validation = validatePassword(password);
-    setPasswordValidation(validation);
-  }, [password]);
+  async function fetchProfile() {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+    try {
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      const response = await fetch(`${baseUrl}/profile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) return;
+      const user = await response.json();
+      setPrenom(user.prenom || "");
+      setNom(user.nom || "");
+      setUtilisateur(user.utilisateur || "");
+      setAdresse(user.adresse || "");
+      setSurf(user.surf || "");
+      setEmail(user.email || "");
+      // Ne pré-remplit pas le mot de passe pour la sécurité
+    } catch (err) {
+      // Optionnel : gérer l’erreur
+    }
+  }
+  fetchProfile();
+}, []);
+
+
 
   // Gestion de la soumission du formulaire
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    // Vérifie la validité du mot de passe avant d'envoyer
-    if (!passwordValidation.isValid) {
-      setError("Le mot de passe ne respecte pas les critères requis.");
-      return;
-    }
+ 
 
     setLoading(true);
     try {
       const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
-      
+      const token = localStorage.getItem("accessToken");
       const response = await fetch(
-        `${baseUrl}/signup`,
+        `${baseUrl}/change-profile`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+               "Authorization": `Bearer ${token}` // AJOUTE CE HEADER !
           },
           body: JSON.stringify({ 
             prenom, 
@@ -73,10 +85,10 @@ export default function CreateLog() {
       );
 
       const data = await response.json();
-
+      
       if (response.ok) {
         // Redirection après un succès, sans utiliser Next.js
-        window.location.href = "/confirmation";
+        window.location.href = "/profil";
       } else {
         setError(data.message || "Échec de l'inscription. Vérifiez vos informations.");
       }
@@ -93,7 +105,7 @@ export default function CreateLog() {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[url('/surfbg.jpg')] bg-cover bg-center">
       <div className="bg-white rounded-xl shadow-2xl p-8 max-w-lg w-full border-2 border-gray-100">
         <h2 className="text-3xl font-bold mb-6 text-center text-[#0096C7]">
-          Création de compte
+          Modification du compte
         </h2>
 
         {error && (
@@ -213,64 +225,22 @@ export default function CreateLog() {
             />
           </div>
 
-          {/* Champ du mot de passe */}
-          <div>
-            <label className="block mb-2 font-medium text-[#2D3A40]" htmlFor="password">
-              Mot de passe
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Votre mot de passe"
-                required
-                className={getPasswordFieldClasses(password, passwordValidation)}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#00B4D8]"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-            
-            {/* Indicateurs de validation, affichés en une ou deux colonnes selon la taille de l'écran */}
-            {password && (
-              <div className="mt-2 text-xs space-y-1 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-                {passwordCriteria.map((criterion) => (
-                  <div 
-                    key={criterion.key}
-                    className={passwordValidation[criterion.key] ? 'text-green-600' : 'text-red-600'}
-                  >
-                    ✓ {criterion.message}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+        
 
           {/* Bouton de soumission */}
           <div className="flex justify-center">
             <button
               type="submit"
-              disabled={loading || !passwordValidation.isValid}
+              disabled={loading}
               className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Chargement..." : "Envoyer"}
             </button>
           </div>
         </form>
-        {/* Lien de connexion pour les utilisateurs existants */}
-        <div className="mt-4 text-center text-gray-600 text-sm">
-          Vous avez déjà un compte ?{' '}
-          <a href="/login" className="text-[#0077B6] hover:underline font-bold">
-            Connectez-vous ici
-          </a>
-        </div>
       </div>
     </div>
   );
 }
+       
+        

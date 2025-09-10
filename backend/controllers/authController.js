@@ -303,72 +303,40 @@ export const getProfile = async (req, res) => {
 };
 
 export const changeProfile = async (req, res) => {
-  console.log("=== DÉBUT changeProfile ===");
-  console.log("Body reçu:", req.body);
-  
-  const { email, newPassword } = req.body;
-  
-  if (!email || !newPassword) {
-    console.log("❌ Champs manquants - email:", email, "newPassword:", !!newPassword);
-    return res.status(400).json({ error: "Champs requis manquants." });
-  }
+  const userId = req.user.id; // récupéré via le token JWT middleware
+  const { prenom, nom, adresse, surf, utilisateur, email, password } = req.body;
 
-  console.log("✅ Champs présents - email:", email);
+  if (!prenom || !nom || !adresse || !surf || !utilisateur || !email)
+    return res.status(400).json({ error: "Champs requis manquants." });
 
   try {
-    // 1. Vérifier la connexion Prisma
-    console.log("🔍 Recherche de l'utilisateur...");
-    const user = await prisma.user.findUnique({ 
-      where: { email },
-      select: {
-        id: true,
-        email: true,
-        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
-      }
-    });
-    
-    if (!user) {
-      console.log("❌ Utilisateur non trouvé pour email:", email);
-      return res.status(404).json({ error: "Utilisateur introuvable." });
+    // Vérifie si l'email est déjà utilisé par un autre utilisateur
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing && existing.id !== userId)
+      return res.status(409).json({ error: "Email déjà utilisé." });
+
+    // Prépare les données à mettre à jour
+    const updateData = {
+      prenom,
+      nom,
+      location: adresse,
+      surf_level: surf,
+      username: utilisateur,
+      email,
+    };
+
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
     }
-    
-    console.log("✅ Utilisateur trouvé - ID:", user.id);
-    console.log("📝 Ancien hash (premiers 20 chars):", user.password?.substring(0, 20) + "...");
 
-    // 2. Hasher le nouveau mot de passe
-    console.log("🔐 Hashage du nouveau mot de passe...");
-    const newHashedPassword = await bcrypt.hash(newPassword, 10);
-    console.log("✅ Nouveau hash généré (premiers 20 chars):", newHashedPassword.substring(0, 20) + "...");
-
-    // 3. Mise à jour en base
-    console.log("💾 Mise à jour en base de données...");
-    const updatedUser = await prisma.user.update({
-      where: { email },
-      data: { password: newHashedPassword }, // ← CORRECTION: "password" au lieu de "passwordHash"
-      select: {
-        id: true,
-        email: true,
-        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
-      }
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
     });
 
-    console.log("✅ Mise à jour réussie");
-    console.log("📝 Hash final (premiers 20 chars):", updatedUser.password.substring(0, 20) + "...");
-    
-    res.json({ 
-      message: "Mot de passe mis à jour avec succès.",
-      success: true 
-    });
-
+    res.status(200).json({ message: "Modifications réussies !" });
   } catch (error) {
-    console.error("💥 ERREUR DÉTAILLÉE:");
-    console.error("- Message:", error.message);
-    console.error("- Code:", error.code);
-    console.error("- Stack:", error.stack);
-    
-    res.status(500).json({ 
-      error: "Erreur serveur.",
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    console.error("Profile update error:", error);
+    res.status(500).json({ error: "Erreur serveur." });
   }
 };
