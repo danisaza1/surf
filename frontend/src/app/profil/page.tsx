@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { User, MapPin, Waves, Edit3, Save, X, Mail, Star } from "lucide-react";
 import MainLayout from "@/components/MainLayout";
+import { useRouter } from "next/navigation";
 
 interface FavoriteSpot {
   key: string;
@@ -29,13 +30,49 @@ interface UserProfile {
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState<UserProfile | null>(null);
+ const [profile, setProfile] = useState<UserProfile | null>(null);
   const [editedProfile, setEditedProfile] = useState<UserProfile | null>(null);
+ 
   const [loading, setLoading] = useState(true);
+
+
+  // ✅ El estado ahora es un array de objetos FavoriteSpot
+  const [user, setUser] = useState<UserProfile | null>(null);
+
   const [favorites, setFavorites] = useState<FavoriteSpot[]>([]);
   const [editedFavorites, setEditedFavorites] = useState<FavoriteSpot[]>([]);
   const [removedFavoriteIds, setRemovedFavoriteIds] = useState<string[]>([]);
 
+    // Récupérer le profil utilisateur
+  useEffect(() => {
+    async function fetchProfile() {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+        const response = await fetch(`${baseUrl}/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) throw new Error("Erreur lors du chargement du profil");
+        const userData = await response.json();
+        setProfile(userData);
+        setEditedProfile(userData);
+      } catch (err) {
+        setProfile(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProfile();
+  }, []);
+
+// second useEffect pour récupérer les favoris
   // Fetch user profile on component mount
   useEffect(() => {
     const fetchProfile = async () => {
@@ -160,8 +197,9 @@ export default function ProfilePage() {
     setEditedProfile((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
-  const currentData = isEditing ? editedProfile : user;
 
+  const currentData = isEditing ? editedProfile : profile;
+  const router = useRouter();
   const currentDate = new Date();
   const options: Intl.DateTimeFormatOptions = { weekday: "long" };
   const today =

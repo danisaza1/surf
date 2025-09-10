@@ -76,14 +76,8 @@ export default function ForgottenPassword() {
       } else {
         setError(data.message || "Échec du changement de mot de passe.");
       }
-    } else {
-      // Utiliser le message d'erreur du serveur si disponible
-      setError(data.error || "Échec du changement de mot de passe. Vérifiez vos informations.");
-    }
-  } catch (err) {
-    setError("Erreur de connexion. Veuillez réessayer plus tard.");
-    console.error("Change password failed:", err);
-  } finally {
+    } 
+  }  finally {
     setLoading(false);
   }
 };

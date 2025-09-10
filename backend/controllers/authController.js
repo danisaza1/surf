@@ -67,16 +67,29 @@ export const changePassword = async (req, res) => {
     return res.status(400).json({ error: "Champs requis manquants." });
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
+      }
+    });
+    
     if (!user) return res.status(404).json({ error: "Utilisateur introuvable." });
 
     const newHashedPassword = await bcrypt.hash(newPassword, 10);
     await prisma.user.update({
       where: { email },
-      data: { password: newHashedPassword },
+      data: { password: newHashedPassword }, // ← CORRECTION: "password" au lieu de "passwordHash"
+      select: {
+        id: true,
+        email: true,
+        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
+      }
     });
 
-    res.json({ message: "Mot de passe mis à jour avec succès." });
+    res.json({ message: "Mot de passe mis à jour avec succès.", success: true  });
   } catch (error) {
     console.error("Change password error:", error);
     res.status(500).json({ error: "Erreur serveur." });
@@ -85,6 +98,7 @@ export const changePassword = async (req, res) => {
 
 // ======================== LOGIN ========================
 export const login = async (req, res) => {
+   console.log("coucou login")
   const { email, password } = req.body;
 
   try {
@@ -189,6 +203,7 @@ export const getLatestUser = async (req, res) => {
 
 // ======================== GET PROFILE ========================
 export const getProfile = async (req, res) => {
+  console.log('Récupération du profil utilisateur...');
   const accessToken = req.headers["authorization"]?.split(" ")[1];
   if (!accessToken) return res.sendStatus(401);
 
@@ -210,9 +225,58 @@ export const getProfile = async (req, res) => {
 
     if (!user) return res.status(404).json({ error: "Utilisateur introuvable." });
 
-    res.json(user);
+    res.json({
+      id: user.id,
+      prenom: user.prenom,
+      nom: user.nom,
+      adresse: user.location,
+      surf: user.surf_level,
+      utilisateur: user.username,
+      email: user.email,
+      role: user.role,
+    });
+
   } catch (error) {
-    console.error("Get profile error:", error);
+    console.error("Profile update error:", error);
+    res.status(500).json({ error: "Erreur serveur." });
+  }
+};
+
+export const changeProfile = async (req, res) => {
+  const userId = req.user.id; // récupéré via le token JWT middleware
+  const { prenom, nom, adresse, surf, utilisateur, email, password } = req.body;
+
+  if (!prenom || !nom || !adresse || !surf || !utilisateur || !email)
+    return res.status(400).json({ error: "Champs requis manquants." });
+
+  try {
+    // Vérifie si l'email est déjà utilisé par un autre utilisateur
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing && existing.id !== userId)
+      return res.status(409).json({ error: "Email déjà utilisé." });
+
+    // Prépare les données à mettre à jour
+    const updateData = {
+      prenom,
+      nom,
+      location: adresse,
+      surf_level: surf,
+      username: utilisateur,
+      email,
+    };
+
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+    });
+
+    res.status(200).json({ message: "Modifications réussies !" });
+  } catch (error) {
+    console.error("Profile update error:", error);
     res.status(500).json({ error: "Erreur serveur." });
   }
 };

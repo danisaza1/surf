@@ -135,6 +135,7 @@ export default function Login() {
               {loading ? "Chargement..." : "Je me connecte"}
             </button>
         </form>
+
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Pas encore inscrit ?{" "}
