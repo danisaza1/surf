@@ -9,9 +9,11 @@ import {
   X,
   Mail,
   Star,
+  Link,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import MainLayout from "@/components/MainLayout";
+import { useRouter } from "next/navigation";
 
 // ✅ Actualiza la interfaz para reflejar los datos de los favoritos
 interface FavoriteSpot {
@@ -23,31 +25,57 @@ interface FavoriteSpot {
 }
 
 interface UserProfile {
-  username: string;
-  password: string;
+  id: number;
+  prenom: string;
+  nom: string;
+  adresse: string;
+  surf: string;
+  utilisateur: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  location: string;
-  surfLevel: string;
+  role: string;
 }
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState<UserProfile>({
-    username: "Abeso",
-    password: "123456",
-    email: "example@free.fr",
-    firstName: "thomas",
-    lastName: "BOSS",
-    location: "Promenade des Anglais, Nice",
-    surfLevel: "Intermédiaire",
-  });
+ const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [editedProfile, setEditedProfile] = useState<UserProfile | null>(null);
+ 
+  const [loading, setLoading] = useState(true);
 
-  const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
+
   // ✅ El estado ahora es un array de objetos FavoriteSpot
   const [favorites, setFavorites] = useState<FavoriteSpot[]>([]);
 
+    // Récupérer le profil utilisateur
+  useEffect(() => {
+    async function fetchProfile() {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+        const response = await fetch(`${baseUrl}/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) throw new Error("Erreur lors du chargement du profil");
+        const userData = await response.json();
+        setProfile(userData);
+        setEditedProfile(userData);
+      } catch (err) {
+        setProfile(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProfile();
+  }, []);
+
+// second useEffect pour récupérer les favoris
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -69,8 +97,11 @@ export default function ProfilePage() {
   };
 
   const handleSave = () => {
-    setProfile(editedProfile);
-    setIsEditing(false);
+    if (editedProfile) {
+      setProfile(editedProfile);
+      setIsEditing(false);
+      // je dois ici ajouter un appel API pour sauvegarder les modifs côté serveur à faire dans un second temps
+    }
   };
 
   const handleCancel = () => {
@@ -79,14 +110,12 @@ export default function ProfilePage() {
   };
 
   const handleInputChange = (field: keyof UserProfile, value: string) => {
-    setEditedProfile((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setEditedProfile((prev) => prev ? { ...prev, [field]: value } : prev);
   };
 
-  const currentData = isEditing ? editedProfile : profile;
 
+  const currentData = isEditing ? editedProfile : profile;
+  const router = useRouter();
   const currentDate = new Date();
   const options: Intl.DateTimeFormatOptions = { weekday: 'long' };
   const today = new Intl.DateTimeFormat('fr-FR', options).format(currentDate).charAt(0).toUpperCase() + new Intl.DateTimeFormat('fr-FR', options).format(currentDate).slice(1);
@@ -118,7 +147,7 @@ export default function ProfilePage() {
               Bienvenue,
             </h1>
             <p className="text-3xl font-bold text-gray-800 md:text-4xl lg:text-5xl">
-              {currentData.firstName}!
+              {currentData?.utilisateur}!
             </p>
             <p className="text-sm text-gray-500 mt-2 md:text-base">
               {today}, {currentDate.toLocaleDateString()}
@@ -139,17 +168,17 @@ export default function ProfilePage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={currentData.username}
-                      onChange={(e) => handleInputChange("username", e.target.value)}
+                      value={currentData?.utilisateur}
+                      onChange={(e) => handleInputChange("utilisateur", e.target.value)}
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800">{currentData.username}</p>
+                    <p className="font-semibold text-gray-800">{currentData?.utilisateur}</p>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
+              {/* <div className="flex items-center gap-4">
                 <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
                   <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
                   <div className="w-2 h-2 bg-gray-600 rounded-full ml-0.5"></div>
@@ -167,24 +196,25 @@ export default function ProfilePage() {
                     <p className="font-semibold text-gray-800">••••••</p>
                   )}
                 </div>
-              </div>
+              </div> */}
 
-              <div className="flex items-center gap-4">
+       <div className="flex items-center gap-4">
                 <Mail size={16} className="text-gray-600 flex-shrink-0" />
                 <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
                   <p className="text-sm font-medium text-gray-500">Email</p>
                   {isEditing ? (
                     <input
                       type="email"
-                      value={currentData.email}
+                      value={currentData?.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto truncate mt-1 sm:mt-0"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800 truncate">{currentData.email}</p>
+                    <p className="font-semibold text-gray-800 truncate">{currentData?.email}</p>
                   )}
                 </div>
               </div>
+
 
               <div className="flex items-center gap-4">
                 <User size={16} className="text-gray-600 flex-shrink-0" />
@@ -193,12 +223,12 @@ export default function ProfilePage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={currentData.firstName}
-                      onChange={(e) => handleInputChange("firstName", e.target.value)}
+                      value={currentData?.prenom}
+                      onChange={(e) => handleInputChange("prenom", e.target.value)}
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800">{currentData.firstName}</p>
+                    <p className="font-semibold text-gray-800">{currentData?.prenom}</p>
                   )}
                 </div>
               </div>
@@ -210,12 +240,12 @@ export default function ProfilePage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={currentData.lastName}
-                      onChange={(e) => handleInputChange("lastName", e.target.value)}
+                      value={currentData?.nom}
+                      onChange={(e) => handleInputChange("nom", e.target.value)}
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800">{currentData.lastName}</p>
+                    <p className="font-semibold text-gray-800">{currentData?.nom}</p>
                   )}
                 </div>
               </div>
@@ -227,24 +257,24 @@ export default function ProfilePage() {
                   {isEditing ? (
                     <input
                       type="text"
-                      value={currentData.location}
-                      onChange={(e) => handleInputChange("location", e.target.value)}
+                      value={currentData?.adresse}
+                      onChange={(e) => handleInputChange("adresse", e.target.value)}
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
                     />
                   ) : (
-                    <p className="font-semibold text-gray-800 truncate">{currentData.location}</p>
+                    <p className="font-semibold text-gray-800 truncate">{currentData?.adresse}</p>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
+   <div className="flex items-center gap-4">
                 <Waves size={16} className="text-gray-600 flex-shrink-0" />
                 <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
                   <p className="text-sm font-medium text-gray-500">Niveau de Surf</p>
                   {isEditing ? (
                     <select
-                      value={currentData.surfLevel}
-                      onChange={(e) => handleInputChange("surfLevel", e.target.value)}
+                      value={currentData?.surf}
+                      onChange={(e) => handleInputChange("surf", e.target.value)}
                       className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-auto mt-1 sm:mt-0"
                     >
                       <option value="Débutant">Débutant</option>
@@ -253,13 +283,21 @@ export default function ProfilePage() {
                       <option value="Expert">Expert</option>
                     </select>
                   ) : (
-                    <p className="font-semibold text-gray-800">{currentData.surfLevel}</p>
+                    <p className="font-semibold text-gray-800">{currentData?.surf}</p>
                   )}
                 </div>
               </div>
             </div>
           </div>
-
+          {/* <Link href="/change-profile"> */}
+           <button
+                onClick={() => router.push("/change-profile")}
+                className="flex-1 bg-[#00B4D8] text-white py-2 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-[#0077B6] transition-colors"
+              >
+                <Save size={16} />
+                changer vos informations
+              </button>
+          {/* </Link> */}
           <div className="mt-10">
             <h2 className="text-xl font-semibold text-gray-800 flex gap-2 items-center">
               <Star size={20} className="text-yellow-400" /> Mes favoris

@@ -21,6 +21,7 @@ interface UserProfile {
 export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  
 
 
   const handleLogout = () => {

@@ -259,40 +259,18 @@ export const getLatestUser = async(req, res) => {
 };
 
 export const getProfile = async (req, res) => {
-  console.log('Récupération du profil utilisateur...');
   const accessToken = req.headers['authorization']?.split(' ')[1];
-  try {
-    console.log('req.user:', req.user); // Debug
-    console.log('req.headers:', req.headers); // Debug
-
-      if (!accessToken) {
-    console.log("Aucun token fourni.");
-    return res.sendStatus(401);
+  if (!accessToken) {
+    return res.status(401).json({ error: "Token d'authentification manquant." });
   }
 
-  
-    
-    const userId = req.user?.id;
-    
-    if (!userId) {
-      return res.status(401).json({ 
-        error: "Token d'authentification invalide ou manquant.",
-        debug: "req.user est undefined" 
-      });
-    }
+  try {
+    // Vérifie et décode le token
+    const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
 
-      jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      console.log("Token invalide ou expiré:", err);
-      return res.sendStatus(403);
-    }
-    console.log("Utilisateur décodé:", user); // Debug
-    req.user = user; // Attache l'utilisateur à la requête
-    //next();
-  });
-
+    // Récupère l'utilisateur en base
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: decoded.id },
       select: {
         id: true,
         prenom: true,
@@ -319,9 +297,78 @@ export const getProfile = async (req, res) => {
       email: user.email,
       role: user.role,
     });
+  } catch (error) {
+    return res.status(403).json({ error: "Token invalide ou expiré." });
+  }
+};
+
+export const changeProfile = async (req, res) => {
+  console.log("=== DÉBUT changeProfile ===");
+  console.log("Body reçu:", req.body);
+  
+  const { email, newPassword } = req.body;
+  
+  if (!email || !newPassword) {
+    console.log("❌ Champs manquants - email:", email, "newPassword:", !!newPassword);
+    return res.status(400).json({ error: "Champs requis manquants." });
+  }
+
+  console.log("✅ Champs présents - email:", email);
+
+  try {
+    // 1. Vérifier la connexion Prisma
+    console.log("🔍 Recherche de l'utilisateur...");
+    const user = await prisma.user.findUnique({ 
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
+      }
+    });
+    
+    if (!user) {
+      console.log("❌ Utilisateur non trouvé pour email:", email);
+      return res.status(404).json({ error: "Utilisateur introuvable." });
+    }
+    
+    console.log("✅ Utilisateur trouvé - ID:", user.id);
+    console.log("📝 Ancien hash (premiers 20 chars):", user.password?.substring(0, 20) + "...");
+
+    // 2. Hasher le nouveau mot de passe
+    console.log("🔐 Hashage du nouveau mot de passe...");
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log("✅ Nouveau hash généré (premiers 20 chars):", newHashedPassword.substring(0, 20) + "...");
+
+    // 3. Mise à jour en base
+    console.log("💾 Mise à jour en base de données...");
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: { password: newHashedPassword }, // ← CORRECTION: "password" au lieu de "passwordHash"
+      select: {
+        id: true,
+        email: true,
+        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
+      }
+    });
+
+    console.log("✅ Mise à jour réussie");
+    console.log("📝 Hash final (premiers 20 chars):", updatedUser.password.substring(0, 20) + "...");
+    
+    res.json({ 
+      message: "Mot de passe mis à jour avec succès.",
+      success: true 
+    });
 
   } catch (error) {
-    console.error("Get profile error:", error);
-    res.status(500).json({ error: "Erreur serveur." });
+    console.error("💥 ERREUR DÉTAILLÉE:");
+    console.error("- Message:", error.message);
+    console.error("- Code:", error.code);
+    console.error("- Stack:", error.stack);
+    
+    res.status(500).json({ 
+      error: "Erreur serveur.",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
