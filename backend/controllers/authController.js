@@ -229,9 +229,9 @@ export const getProfile = async (req, res) => {
       id: user.id,
       prenom: user.prenom,
       nom: user.nom,
-      adresse: user.location,
-      surf: user.surf_level,
-      utilisateur: user.username,
+      location: user.location,
+      surf_level: user.surf_level,
+      username: user.username,
       email: user.email,
       role: user.role,
     });
@@ -244,9 +244,9 @@ export const getProfile = async (req, res) => {
 
 export const changeProfile = async (req, res) => {
   const userId = req.user.id; // récupéré via le token JWT middleware
-  const { prenom, nom, adresse, surf, utilisateur, email, password } = req.body;
+  const { prenom, nom, location, surf, username, email, password } = req.body;
 
-  if (!prenom || !nom || !adresse || !surf || !utilisateur || !email)
+  if (!prenom || !nom || !location || !surf || !username || !email)
     return res.status(400).json({ error: "Champs requis manquants." });
 
   try {
@@ -259,9 +259,9 @@ export const changeProfile = async (req, res) => {
     const updateData = {
       prenom,
       nom,
-      location: adresse,
+      location: location,
       surf_level: surf,
-      username: utilisateur,
+      username: username,
       email,
     };
 
