@@ -83,12 +83,9 @@ export default function Home() {
                   </p>
                  
            <div className="absolute bottom-4 right-4 text-white/70 text-sm select-none">
-                  swipe ↦
                 </div>
                 <div className="absolute top-4 left-4 text-white/70 text-sm select-none">
-                  1 / 3
                 </div>
-          <div>coucou</div>
                 </div>
               </div>
             </div>

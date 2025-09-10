@@ -79,7 +79,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Votre email ou nom d'utilisateur"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder-gray-400"
+              className="w-full px-4 py-3 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder-gray-400"
             />
           </div>
 
@@ -98,7 +98,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Votre mot de passe"
                 required
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder-gray-400"
+                className="w-full text-black px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder-gray-400"
               />
               <button
                 type="button"
@@ -126,6 +126,7 @@ export default function Login() {
               {loading ? "Chargement..." : "Je me connecte"}
             </button>
         </form>
+
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Pas encore inscrit ?{" "}

@@ -1,21 +1,10 @@
 "use client";
 import Image from "next/image";
-import {
-  User,
-  MapPin,
-  Waves,
-  Edit3,
-  Save,
-  X,
-  Mail,
-  Star,
-  Link,
-} from "lucide-react";
+import { User, MapPin, Waves, Edit3, Save, X, Mail, Star } from "lucide-react";
 import { useState, useEffect } from "react";
 import MainLayout from "@/components/MainLayout";
 import { useRouter } from "next/navigation";
 
-// ✅ Actualiza la interfaz para reflejar los datos de los favoritos
 interface FavoriteSpot {
   id: number;
   api_place_id: string;
@@ -44,6 +33,8 @@ export default function ProfilePage() {
 
 
   // ✅ El estado ahora es un array de objetos FavoriteSpot
+  const [user, setUser] = useState<UserProfile | null>(null);
+
   const [favorites, setFavorites] = useState<FavoriteSpot[]>([]);
 
     // Récupérer le profil utilisateur
@@ -77,6 +68,37 @@ export default function ProfilePage() {
 
 // second useEffect pour récupérer les favoris
   useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("No access token found");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+        const response = await fetch(`${baseUrl}/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const userData = await response.json();
+        setUser(userData);
+        setEditedProfile(userData);
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
     const fetchFavorites = async () => {
       try {
         const res = await fetch("http://localhost:3002/api/favorites");
@@ -85,16 +107,13 @@ export default function ProfilePage() {
           setFavorites(data);
         }
       } catch (err) {
-        console.error("Error al cargar los favoritos", err);
+        console.error("Error fetching favorites:", err);
       }
     };
     fetchFavorites();
   }, []);
 
-  const handleEdit = () => {
-    setIsEditing(true);
-    setEditedProfile(profile);
-  };
+  const handleEdit = () => setIsEditing(true);
 
   const handleSave = () => {
     if (editedProfile) {
@@ -105,7 +124,7 @@ export default function ProfilePage() {
   };
 
   const handleCancel = () => {
-    setEditedProfile(profile);
+    setEditedProfile(user);
     setIsEditing(false);
   };
 
@@ -117,17 +136,26 @@ export default function ProfilePage() {
   const currentData = isEditing ? editedProfile : profile;
   const router = useRouter();
   const currentDate = new Date();
-  const options: Intl.DateTimeFormatOptions = { weekday: 'long' };
-  const today = new Intl.DateTimeFormat('fr-FR', options).format(currentDate).charAt(0).toUpperCase() + new Intl.DateTimeFormat('fr-FR', options).format(currentDate).slice(1);
+  const options: Intl.DateTimeFormatOptions = { weekday: "long" };
+  const today =
+    new Intl.DateTimeFormat("fr-FR", options)
+      .format(currentDate)
+      .charAt(0)
+      .toUpperCase() +
+    new Intl.DateTimeFormat("fr-FR", options)
+      .format(currentDate)
+      .slice(1);
 
+  if (loading || !currentData) return <MainLayout>Chargement...</MainLayout>;
 
   return (
     <MainLayout>
       <div className="flex flex-col justify-center md:flex-row p-6 md:p-8 md:space-x-8">
+        {/* PROFILE IMAGE & GREETING */}
         <div className="flex flex-col items-center text-center pb-4 md:pb-0 md:w-1/3 md:flex-shrink-0 md:justify-center md:items-start md:text-left">
           <div className="relative w-24 h-24 md:w-40 md:h-40 flex-shrink-0 mx-auto md:mx-0 mb-4">
             <Image
-              src="/profile.png"
+              src="/profile.jpg"
               alt="Profile"
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -155,7 +183,9 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        {/* PROFILE DETAILS & FAVORITES */}
         <div className="space-y-6 md:border-l md:border-gray-200 md:pl-8">
+          {/* Perfil Form */}
           <h2 className="text-xl font-semibold text-gray-800 flex md:justify-center gap-2">
             <User size={20} className="text-[#00B4D8]" /> Profil
           </h2>
@@ -304,7 +334,6 @@ export default function ProfilePage() {
             </h2>
             {favorites.length > 0 ? (
               <ul className="mt-4 space-y-3">
-                {/* ✅ Renderizar la propiedad 'name' y usar 'api_place_id' como clave */}
                 {favorites.map((fav) => (
                   <li
                     key={fav.api_place_id}
@@ -320,6 +349,7 @@ export default function ProfilePage() {
             )}
           </div>
 
+          {/* Editing buttons */}
           {isEditing && (
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <button
@@ -340,6 +370,7 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
+
       <div className="p-4 pb-15 md:p-5 text-center text-sm text-gray-500 border-t border-gray-200">
         Bonne session ! 🤙
       </div>

@@ -1,10 +1,10 @@
 'use client';
-// app/profile/page.tsx
-import Image from "next/image";
-import { User, MapPin, Waves, CheckCircle2 } from "lucide-react";
+
+import { LogOut, User, MapPin, Waves, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import MainLayout from "@/components/MainLayout";
 import { useState, useEffect } from 'react';
+import Image from "next/image";
 
 // Interface adaptée
 interface UserProfile {
@@ -99,6 +99,7 @@ useEffect(() => {
         {/* Colonne de gauche : Profil */}
         <div className="md:w-1/2 md:border-r border-gray-200 md:pr-4">
           <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+            <div className="flex items-center gap-30">
             <div>
               <h1 className="text-3xl text-[#0077B6]">
                 Bienvenue, {user.utilisateur} 
@@ -107,24 +108,28 @@ useEffect(() => {
                 {today}, {currentDate.toLocaleDateString()}
               </p>
             </div>
-            {/* <div className="relative w-20 h-20 flex-shrink-0">
-              <Image
-                src="/profile.png"
-                alt="Profile"
-                fill
-                    sizes="(max-width: 768px) 100vw,
-               (max-width: 1200px) 50vw,
-               33vw"
-                className="rounded-full border-4 border-[#00B4D8] shadow-lg object-cover"
-              />
-            </div> */}
+            <div>
+              <LogOut className="text-gray-600 flex-shrink-0" onClick={handleLogout}/>
+            </div>
+            </div>
           </div>
 
           {/* Infos utilisateur */}
           <div className="space-y-4 mt-8">
+            <div className="flex flex-row items-center gap-x-4 justify-center text-center">
+              
+           
             <h2 className="text-xl text-gray-800 flex justify-center gap-2">
               <User size={20} className="text-[#00B4D8]" /> Profil
             </h2>
+            <Image
+                src="/profile.jpg"
+                alt="Profile"
+                width={80}
+                height={80}
+                className="rounded-full border-4 border-[#00B4D8] shadow-lg"
+              />
+             </div>
             <div className="bg-amber-50 rounded-lg p-5 shadow-inner space-y-4">
               <div className="flex items-center gap-4">
                 <MapPin size={20} className="text-gray-600 flex-shrink-0" />
@@ -177,8 +182,7 @@ useEffect(() => {
         </div>
       </div>
 
-     <button className="p-4 pb-15 md:p-5 text-center text-sm text-gray-500 border-t border-gray-200"
-      onClick={handleLogout}>logout</button>
+     
       
       <div className="p-4 pb-15 md:p-5 text-center text-sm text-gray-500 border-t border-gray-200">
         Bonne session ! 🤙
