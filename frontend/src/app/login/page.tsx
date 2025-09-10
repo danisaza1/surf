@@ -34,18 +34,27 @@ export default function Login() {
       );
 
       const data = await response.json();
-  
+
       if (response.ok) {
-        // Récupérer le token d'accès depuis la réponse et le stocker
         const { accessToken } = data;
         if (accessToken) {
-          localStorage.setItem("accessToken", accessToken); // Stocker dans localStorage
-          router.push("/accueil"); // Rediriger vers la page d'accueil
+          localStorage.setItem("accessToken", accessToken);
+          router.push("/accueil");
         } else {
           setError("Échec de la connexion. Aucune réponse valide du serveur.");
         }
-          }
-   
+      } else {
+        // Gestion des erreurs spécifiques venant du backend
+        if (data.message === "INVALID_PASSWORD") {
+          setError("Mot de passe incorrect");
+        } else if (data.message === "USER_NOT_FOUND") {
+          setError("Utilisateur introuvable");
+        } else {
+          setError("Échec de la connexion. Veuillez réessayer.");
+        }
+      }
+    } catch (err) {
+      setError("Erreur réseau. Veuillez réessayer plus tard.");
     } finally {
       setLoading(false);
     }

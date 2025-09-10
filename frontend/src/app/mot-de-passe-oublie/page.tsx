@@ -122,7 +122,7 @@ return (
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Votre email ou nom d'utilisateur"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              className="text-black w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -145,7 +145,7 @@ return (
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#00B4D8]"
+              className=" text-black absolute right-3 top-1/2 -translate-y-1/2 hover:text-[#00B4D8]"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -180,12 +180,12 @@ return (
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirmez votre mot de passe"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              className=" text-black w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#00B4D8]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-[#00B4D8]"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>

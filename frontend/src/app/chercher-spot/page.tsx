@@ -6,12 +6,54 @@ import MainLayout from "../../components/MainLayout";
 
 // Lista de spots de surf predefinidos con coordenadas completas
 const surfSpots: SpotData[] = [
-  { key: "hossegor", name: "Hossegor", location: "Landes, France", lat: 43.6667, lon: -1.4333, place_id: "hossegor" },
-  { key: "lacanau", name: "Lacanau", location: "Gironde, France", lat: 45.0, lon: -1.25, place_id: "lacanau" },
-  { key: "biarritz", name: "Biarritz", location: "Pyrénées-Atlantiques, France", lat: 43.48, lon: -1.55, place_id: "biarritz" },
-  { key: "nice", name: "Nice", location: "Alpes-Maritiques, France", lat: 43.7, lon: 7.26, place_id: "nice" },
-  { key: "santocha", name: "Santocha", location: "Landes, France", lat: 43.68, lon: -1.42, place_id: "santocha" },
-  { key: "la torche", name: "La Torche", location: "Finistère, France", lat: 47.83, lon: -4.31, place_id: "la-torche" },
+  {
+    key: "hossegor",
+    name: "Hossegor",
+    location: " , Landes, France",
+    lat: 43.6667,
+    lon: -1.4333,
+    place_id: "hossegor",
+  },
+  {
+    key: "lacanau",
+    name: "Lacanau",
+    location: " ,Gironde, France",
+    lat: 45.0,
+    lon: -1.25,
+    place_id: "lacanau",
+  },
+  {
+    key: "biarritz",
+    name: "Biarritz",
+    location: " , Pyrénées-Atlantiques, France",
+    lat: 43.48,
+    lon: -1.55,
+    place_id: "biarritz",
+  },
+  {
+    key: "nice",
+    name: "Nice",
+    location: " , Alpes-Maritiques, France",
+    lat: 43.7,
+    lon: 7.26,
+    place_id: "nice",
+  },
+  {
+    key: "santocha",
+    name: "Santocha",
+    location: " , Landes, France",
+    lat: 43.68,
+    lon: -1.42,
+    place_id: "santocha",
+  },
+  {
+    key: "la torche",
+    name: "La Torche",
+    location: " , Finistère, France",
+    lat: 47.83,
+    lon: -4.31,
+    place_id: "la-torche",
+  },
 ];
 
 // Tipo para manejar spots tanto hardcodeados como de API
@@ -36,7 +78,8 @@ export default function FindSpotPage() {
   const filteredSpots = surfSpots.filter(
     (spot) =>
       spot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      spot.location.toLowerCase().includes(searchTerm.toLowerCase())
+      spot.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      spot.display_name
   );
 
   // Cargar favoritos desde el backend
@@ -69,7 +112,7 @@ export default function FindSpotPage() {
           name: spot.name,
           latitude: spot.lat,
           longitude: spot.lon,
-          display_name: spot.display_name || spot.location,
+          display_name: spot.display_name,
         }),
       });
       if (!res.ok) throw new Error("Error al actualizar favoritos");
@@ -83,7 +126,9 @@ export default function FindSpotPage() {
   const searchSpotByAPI = async (query: string): Promise<SpotData | null> => {
     try {
       const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
-      const response = await fetch(`${baseUrl}/api/geocode?place=${encodeURIComponent(query)}`);
+      const response = await fetch(
+        `${baseUrl}/api/geocode?place=${encodeURIComponent(query)}`
+      );
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Error al buscar.");
@@ -92,11 +137,10 @@ export default function FindSpotPage() {
       if (data.lat && data.lon) {
         return {
           key: query.toLowerCase().replace(/\s+/g, "-"),
-          name: data.display_name?.split(",")[0] || query,
-          location: data.display_name || query,
+          name: data.name,
+          location: data.display_name || "",
           lat: parseFloat(data.lat),
           lon: parseFloat(data.lon),
-          display_name: data.display_name,
           place_id: data.place_id || query.toLowerCase().replace(/\s+/g, "-"),
         };
       }
@@ -133,7 +177,9 @@ export default function FindSpotPage() {
 
   const handleSearch = (spotName: string) => {
     const spotFound = surfSpots.find(
-      (s) => s.name.toLowerCase() === spotName.toLowerCase() || s.key === spotName.toLowerCase()
+      (s) =>
+        s.name.toLowerCase() === spotName.toLowerCase() ||
+        s.key === spotName.toLowerCase()
     );
     if (spotFound) {
       router.push(`/hotspot/${spotFound.key}`);
@@ -144,7 +190,14 @@ export default function FindSpotPage() {
 
   // Combinar spots hardcodeados con el spot de la API
   const allSpots = [...filteredSpots];
-  if (searchedSpot && !filteredSpots.some(s => s.name.toLowerCase() === searchedSpot.name.toLowerCase())) {
+  if (
+    searchedSpot &&
+    !filteredSpots.some(
+      (s) =>
+        s.name.toLowerCase() === searchedSpot.name.toLowerCase() ||
+        s.location.toLowerCase() === searchedSpot.location.toLowerCase()
+    )
+  ) {
     allSpots.push(searchedSpot);
   }
 
@@ -153,7 +206,9 @@ export default function FindSpotPage() {
       <main className="flex-1 p-6 space-y-8 md:pb-0 pb-20 flex flex-col">
         <div className="flex items-center gap-2 mb-6 justify-center">
           <Waves size={28} className="text-[#00B4D8]" />
-          <h1 className="text-3xl font-bold text-[#0077B6]">Trouver le spot !</h1>
+          <h1 className="text-3xl font-bold text-[#0077B6]">
+            Trouver le spot !
+          </h1>
         </div>
 
         <div className="relative mb-6">
@@ -172,7 +227,10 @@ export default function FindSpotPage() {
             }}
             className="w-full text-black pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent transition-all placeholder:text-gray-400"
           />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+          />
           {loading && (
             <div className="absolute inset-0 bg-white/70 flex items-center justify-center rounded-lg">
               <p className="text-[#0077B6] font-semibold">Chargement ...</p>
@@ -192,17 +250,35 @@ export default function FindSpotPage() {
             allSpots.map((spot) => {
               const spotId = spot.place_id || spot.key;
               const isApiSpot = !!spot.place_id;
+               const extraName = spot.location
+    .split(",")
+    .slice(1)
+    .map((s) => s.trim())
+    .join(", ");
+
+  console.log("Spot:", spot.location, "Extra:", extraName);
 
               return (
-                <div key={spotId} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-inner">
-                  <button onClick={() => handleSearch(spot.name)} className="w-full text-left flex items-center gap-4">
+                <div
+                  key={spotId}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-inner"
+                >
+                  <button
+                    onClick={() => handleSearch(spot.name)}
+                    className="w-full text-left flex items-center gap-4"
+                  >
                     <MapPin size={24} className="text-[#0077B6]" />
                     <div>
-                      <p className="text-lg font-semibold text-gray-800">{spot.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {spot.location}
-                        {isApiSpot && <span className="ml-2 text-xs text-blue-500"></span>}
+                      <p className="text-lg font-semibold text-gray-800">
+                        {spot.name.split(",")[0]}
                       </p>
+                      <p className="text-sm text-gray-500">
+  {isApiSpot ? (
+    <span className="text-sm text-red">{extraName}</span>
+  ) : (
+    spot.location
+  )}
+</p>
                     </div>
                   </button>
                   <div className="flex items-center gap-2">
@@ -216,13 +292,18 @@ export default function FindSpotPage() {
                         }`}
                       />
                     </button>
-                    <ArrowRight size={20} className="text-gray-400 hover:text-[#00B4D8]" />
+                    <ArrowRight
+                      size={20}
+                      className="text-gray-400 hover:text-[#00B4D8]"
+                    />
                   </div>
                 </div>
               );
             })
           ) : (
-            <div className="text-center text-gray-500 py-10">Aucun spot trouvé.</div>
+            <div className="text-center text-gray-500 py-10">
+              Aucun spot trouvé.
+            </div>
           )}
         </div>
       </main>
