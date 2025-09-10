@@ -2,6 +2,7 @@ import express from "express";
 import fetch from "node-fetch";
 
 const router = express.Router();
+
 router.use(express.json());
 
 // Endpoint d'API pour le géocodage
@@ -12,9 +13,7 @@ router.get("/geocode", async (req, res) => {
     return res.status(400).json({ error: 'Le paramètre "place" est requis.' });
   }
 
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-    place
-  )},  France&format=json&limit=1`;
+const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(place)}&format=json&limit=1`;
 
   console.log("Fetching from URL:", url);
   const response = await fetch(url, {
@@ -43,7 +42,8 @@ router.get("/geocode", async (req, res) => {
         lat: parseFloat(location.lat),
         lon: parseFloat(location.lon),
         location: location.display_name,
-        name : location.name
+        name: location.name,
+        display_name: location.display_name,
       });
     } else {
       res.status(404).json({ error: "Lieu non trouvé." });
