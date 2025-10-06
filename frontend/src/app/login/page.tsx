@@ -79,7 +79,7 @@ export default function Login() {
               className="block mb-2 font-medium text-[#2D3A40]"
               htmlFor="email"
             >
-              Email ou nom d'utilisateur
+              Email ou nom d&apos;utilisateur
             </label>
             <input
               id="email"

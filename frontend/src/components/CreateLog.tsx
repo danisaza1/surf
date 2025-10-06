@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function CreateLog() {
@@ -51,29 +51,26 @@ export default function CreateLog() {
   const isValid = hasNumber && hasUppercase && hasLowercase && hasSpecialChar && hasMinLength;
   
   // Fonction de validation du mot de passe
-  const validatePassword = (password: string) => {
-    // Si la longueur est inférieure à 8, la validation échoue  je tente sans inclure setPasswordValidation
-    if (password.length < 8) {
-      
-        return;
-      }
-      
-      setPasswordValidation({
-        isValid,
-        hasMinLength,
-        hasNumber,
-        hasUppercase,
-        hasLowercase,
-        hasSpecialChar
-      });
-};
+const validatePassword = useCallback(
+  (password: string) => {
+    setPasswordValidation({
+      isValid,
+      hasMinLength,
+      hasNumber,
+      hasUppercase,
+      hasLowercase,
+      hasSpecialChar
+    });
+  },
+  [isValid, hasMinLength, hasNumber, hasUppercase, hasLowercase, hasSpecialChar]
+);
 
   // Appelle la validation du mot de passe à chaque changement
   useEffect(() => {
     if (password) {
       validatePassword(password);
     }
-  }, [password]);
+  }, [password,validatePassword]);
 
   // Gestion de la soumission du formulaire
   const handleSubmit = async (e: React.FormEvent) => {

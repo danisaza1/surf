@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link"; // Importation du composant Link
@@ -50,36 +50,35 @@ export default function ForgottenPassword() {
 
 
     // Fonction de validation du mot de passe
-  const validatePassword = (password: string) => {
-    // Si la longueur est inférieure à 8, la validation échoue  je tente sans inclure setPasswordValidation
-    if (password.length < 8) {
-      // setPasswordValidation({
-        //   isValid: false,
-        //   hasMinLength: false,
-        //   hasNumber: false,
-        //   hasUppercase: false,
-        //   hasLowercase: false,
-        //   hasSpecialChar: false
-        // });
-        return;
-      }
-      
-      setPasswordValidation({
-        isValid,
-        hasMinLength,
-        hasNumber,
-        hasUppercase,
-        hasLowercase,
-        hasSpecialChar
-      });
-      };
+
+const validatePassword = useCallback((password: string) => {
+  if (password.length < 8) {
+    setPasswordValidation({
+      isValid: false,
+      hasMinLength: false,
+      hasNumber: false,
+      hasUppercase: false,
+      hasLowercase: false,
+      hasSpecialChar: false
+    });
+    return;
+  }
+
+  setPasswordValidation({
+    isValid,
+    hasMinLength,
+    hasNumber,
+    hasUppercase,
+    hasLowercase,
+    hasSpecialChar
+  });
+}, [isValid, hasMinLength, hasNumber, hasUppercase, hasLowercase, hasSpecialChar]);
 
         // Appelle la validation du mot de passe à chaque changement
-        useEffect(() => {
-          if (password) {
-            validatePassword(password);
-          }
-        }, [password]);
+       useEffect(() => {
+  if (password) validatePassword(password);
+}, [password, validatePassword]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
