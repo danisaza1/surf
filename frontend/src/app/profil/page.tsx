@@ -107,7 +107,7 @@ const handleSave = async (e: React.FormEvent) => {
   }
   
   // 1. Preparamos el payload con los campos que no son el email ni la contraseña
-  const profileUpdates: { [key: string]: any } = {};
+  const profileUpdates: Record<string, string | string[]> = {};
 
   // Lista de campos a revisar, excluyendo 'password'
   const fieldsToCheck: (keyof UserProfile)[] = [
