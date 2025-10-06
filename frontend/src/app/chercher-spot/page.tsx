@@ -85,13 +85,30 @@ export default function FindSpotPage() {
   // Cargar favoritos desde el backend
   useEffect(() => {
     const fetchFavorites = async () => {
+      // 🚨 CORRECCIÓN 1: Obtener el token de acceso
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.warn("No se encontró el token de acceso. No se cargarán los favoritos.");
+        return;
+      }
+
       try {
-        const res = await fetch("http://localhost:3002/api/favorites");
-        if (!res.ok) throw new Error("No se pudieron cargar los favoritos");
+        const res = await fetch("http://localhost:3002/api/favorites", {
+          // 🚨 CORRECCIÓN 1: Enviar el token en los headers
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (!res.ok) {
+          const errorBody = await res.json().catch(() => ({ error: "Error de servidor" }));
+          throw new Error(errorBody.error || `No se pudieron cargar los favoritos: ${res.status}`);
+        }
+
         const data = await res.json();
         setFavorites(data.map((spot: any) => spot.api_place_id));
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        console.error("Error al cargar favoritos:", err.message);
       }
     };
     fetchFavorites();
@@ -100,13 +117,26 @@ export default function FindSpotPage() {
   const toggleFavorite = async (spot: SpotData) => {
     const spotId = spot.place_id || spot.key;
     if (!spotId) return;
+
+    // 🚨 CORRECCIÓN 2: Obtener el token de acceso
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.error("Token de acceso no encontrado. Inicie sesión para añadir favoritos.");
+      setError("Inicie sesión para añadir/quitar favoritos.");
+      return;
+    }
+
     const isFav = favorites.includes(spotId);
     const method = isFav ? "DELETE" : "POST";
 
     try {
       const res = await fetch("http://localhost:3002/api/favorites", {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          // 🚨 CORRECCIÓN 2: Enviar el token en los headers
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           place_id: spotId,
           name: spot.name,
@@ -115,6 +145,7 @@ export default function FindSpotPage() {
           display_name: spot.display_name,
         }),
       });
+
       if (!res.ok) throw new Error("Error al actualizar favoritos");
       const data = await res.json();
       setFavorites(data.map((f: any) => f.api_place_id));

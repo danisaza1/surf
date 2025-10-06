@@ -1,21 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { 
-  validatePassword, 
-  getPasswordFieldClasses, 
-  getPasswordCriteria,
-  type PasswordValidation 
-} from "../../utils/password-validator";
+import {   getPasswordCriteria } from "../../utils/password-validator";
 
 export default function changeProfile() {
   // Définition de l'état du formulaire
   const [prenom, setPrenom] = useState("");
   const [nom, setNom] = useState("");
-  const [utilisateur, setUtilisateur] = useState("");
-  const [adresse, setAdresse] = useState("");
-  const [surf, setSurf] = useState("");
+  const [username, setUtilisateur] = useState("");
+  const [location, setAdresse] = useState("");
+  const [surf_level, setSurf] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -39,9 +33,9 @@ export default function changeProfile() {
       const user = await response.json();
       setPrenom(user.prenom || "");
       setNom(user.nom || "");
-      setUtilisateur(user.utilisateur || "");
-      setAdresse(user.adresse || "");
-      setSurf(user.surf || "");
+      setUtilisateur(user.username || "");
+      setAdresse(user.location || "");
+      setSurf(user.surf_level || "");
       setEmail(user.email || "");
       // Ne pré-remplit pas le mot de passe pour la sécurité
     } catch (err) {
@@ -75,9 +69,9 @@ export default function changeProfile() {
           body: JSON.stringify({ 
             prenom, 
             nom, 
-            utilisateur, 
-            adresse, 
-            surf, 
+            username, 
+            location, 
+            surf_level, 
             email, 
             password 
           }),
@@ -129,7 +123,7 @@ export default function changeProfile() {
                 placeholder="Entrez votre prénom"
                 value={prenom}
                 required
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+                className="w-full px-4 py-3 border text-gray-400  rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
               />
             </div>
             <div>
@@ -143,7 +137,7 @@ export default function changeProfile() {
                 placeholder="Entrez votre nom"
                 value={nom}
                 required
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+                className="w-full px-4 py-3 border rounded-lg text-gray-400  focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
               />
             </div>
           </div>
@@ -159,9 +153,9 @@ export default function changeProfile() {
                 type="text"
                 onChange={(e) => setAdresse(e.target.value)}
                 placeholder="Entrez votre adresse"
-                value={adresse}
+                value={location}
                 required
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+                className="w-full px-4 py-3 border text-gray-400  rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
               />
             </div>
             <div>
@@ -172,10 +166,10 @@ export default function changeProfile() {
                 Niveau du surf
               </label>
               <select
-                value={surf}
+                value={surf_level}
                 onChange={(e) => setSurf(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] text-gray-700"
+                className="w-full px-4 py-3 border  border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] text-gray-700"
               >
                 <option value="" disabled hidden>
                   Sélectionnez votre niveau
@@ -199,11 +193,11 @@ export default function changeProfile() {
             <input
               id="utilisateur"
               type="text"
-              value={utilisateur}
+              value={username}
               onChange={(e) => setUtilisateur(e.target.value)}
               placeholder="Votre utilisateur"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              className="w-full px-4 py-3  text-gray-400 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
             />
           </div>
 
@@ -221,7 +215,7 @@ export default function changeProfile() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Votre email"
               required
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
+              className="w-full px-4 py-3 border  text-gray-400  rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00B4D8] placeholder:text-gray-400"
             />
           </div>
 
@@ -238,6 +232,14 @@ export default function changeProfile() {
             </button>
           </div>
         </form>
+        <div className="flex justify-center mt-8 mb-12">
+  <a
+    href="profil"
+    className="bg-[#0077B6] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-[#005F99] transition-colors"
+  >
+    ⬅ Retour au profil
+  </a>
+</div>
       </div>
     </div>
   );

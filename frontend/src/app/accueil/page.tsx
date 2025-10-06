@@ -139,7 +139,7 @@ export default function ProfilePage() {
                   <p className="text-sm font-medium text-gray-500">
                     Localisation
                   </p>
-                  <p className="text-gray-800">{user.location}</p>
+                  <p className="text-gray-800 capitalize">{user.location}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
