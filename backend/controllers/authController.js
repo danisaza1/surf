@@ -72,7 +72,7 @@ export const changePassword = async (req, res) => {
       select: {
         id: true,
         email: true,
-        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
+        password: true 
       }
     });
     
@@ -81,11 +81,11 @@ export const changePassword = async (req, res) => {
     const newHashedPassword = await bcrypt.hash(newPassword, 10);
     await prisma.user.update({
       where: { email },
-      data: { password: newHashedPassword }, // ← CORRECTION: "password" au lieu de "passwordHash"
+      data: { password: newHashedPassword }, 
       select: {
         id: true,
         email: true,
-        password: true  // ← CORRECTION: "password" au lieu de "passwordHash"
+        password: true 
       }
     });
 
@@ -98,7 +98,7 @@ export const changePassword = async (req, res) => {
 
 // ======================== LOGIN ========================
 export const login = async (req, res) => {
-   console.log("coucou login")
+    console.log("coucou login")
   const { email, password } = req.body;
 
   try {
@@ -242,47 +242,98 @@ export const getProfile = async (req, res) => {
   }
 };
 
+// ======================== CHANGE PROFILE (UPDATE) ========================
 export const changeProfile = async (req, res) => {
-  const userId = req.user.id; // récupéré via le token JWT middleware
-  const { prenom, nom, location, surf, username, email, password } = req.body;
+  // Vérifier l'authentification
+  if (!req.user || !req.user.id) {
+     return res.status(401).json({ error: "Non autorisé: ID utilisateur manquant." });
+  }
+  const userId = req.user.id; 
 
-  if (!prenom || !nom || !location || !surf || !username || !email)
-    return res.status(400).json({ error: "Champs requis manquants." });
+  // CORRECTION: Le frontend envoie 'location' et 'surf'
+  const { prenom, nom, location, surf, username, email, password, removedFavorites } = req.body;
+
+  // Log pour debugging
+  console.log("Données reçues:", { prenom, nom, location, surf, username, email, hasPassword: !!password, removedFavorites });
+
+  // Vérification des champs obligatoires (password est optionnel)
+  if (!prenom || !nom || !location || !surf || !username || !email) {
+    return res.status(400).json({ 
+      error: "Champs requis manquants.",
+      received: { prenom: !!prenom, nom: !!nom, location: !!location, surf: !!surf, username: !!username, email: !!email }
+    });
+  }
 
   try {
-    // Vérifie si l'email est déjà utilisé par un autre utilisateur
+    // 1. Vérifier si l'email est déjà utilisé par un autre utilisateur
     const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing && existing.id !== userId)
-      return res.status(409).json({ error: "Email déjà utilisé." });
+    if (existing && existing.id !== userId) {
+      return res.status(409).json({ error: "Email déjà utilisé par un autre utilisateur." });
+    }
 
-    // Prépare les données à mettre à jour
+    // 2. Préparer les données de mise à jour
+    // IMPORTANT: Utiliser les noms de champs EXACTS de Prisma
     const updateData = {
       prenom,
       nom,
-      location: location,
-      surf_level: surf,
-      username: username,
+      location: location,         // Champ DB: 'location'
+      surf_level: surf,           // Champ DB: 'surf_level' (pas 'surf')
+      username: username,         // Champ DB: 'username' (pas 'utilisateur')
       email,
     };
 
-    if (password) {
+    // 3. Hash du mot de passe si fourni
+    if (password && password.trim() !== '') {
       updateData.password = await bcrypt.hash(password, 10);
+      console.log("Mot de passe mis à jour");
+    }
+    
+    // 4. Supprimer les favoris si présents dans le payload
+    if (removedFavorites && Array.isArray(removedFavorites) && removedFavorites.length > 0) {
+      console.log("Suppression de favoris:", removedFavorites);
+      await prisma.favoriteSpot.deleteMany({
+        where: {
+          user_id: userId,
+          api_place_id: {
+            in: removedFavorites,
+          },
+        },
+      });
     }
 
-    const user = await prisma.user.update({
+    // 5. Mettre à jour l'utilisateur
+    const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: updateData,
+      select: {
+        id: true,
+        prenom: true,
+        nom: true,
+        location: true,
+        surf_level: true,
+        username: true,
+        email: true,
+        role: true,
+      },
     });
 
-    res.status(200).json({ message: "Modifications réussies !" });
+    console.log("Profil mis à jour avec succès:", updatedUser.username);
+
+    // 6. Retourner l'utilisateur mis à jour
+    res.status(200).json(updatedUser);
+
   } catch (error) {
-    console.error("Profile update error:", error);
-    res.status(500).json({ error: "Erreur serveur." });
+    console.error("Erreur lors de la mise à jour du profil:", error);
+    console.error("Stack trace:", error.stack);
+    res.status(500).json({ 
+      error: "Erreur serveur lors de la mise à jour du profil.",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
-};
+}
 
 
-// ======================== UPDATE PROFILE ========================
+// ======================== UPDATE PROFILE (DEPRECATED/UNUSED IN THIS CONTEXT) ========================
 
 export const updateProfile = async (req, res) => {
   try {
