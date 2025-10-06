@@ -4,15 +4,12 @@ import { useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useSwipeCube } from "../utils/useSwipeCube";
-import Get from "@/components/get";
 
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const {
-    w,
     setW,
-    active,
     touchHandlers,
     getCubeStyle,
     getFaceStyle,

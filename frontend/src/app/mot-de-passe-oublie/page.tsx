@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link"; // Importation du composant Link
 import { 
   validatePassword, 
   getPasswordFieldClasses, 
@@ -106,7 +105,7 @@ return (
             className="block mb-2 font-medium text-[#2D3A40]"
             htmlFor="email"
           >
-            Email ou nom d'utilisateur
+            Email ou nom d&apos;utilisateur
           </label>
           <div className="relative">
             <input

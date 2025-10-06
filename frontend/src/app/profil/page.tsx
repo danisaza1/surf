@@ -377,7 +377,7 @@ const handleSave = async (e: React.FormEvent) => {
                   })
                 ) : (
                   <li className="text-gray-500 text-sm italic p-3 bg-white rounded-lg border border-gray-100">
-                    Vous n'avez pas encore de spots favoris.
+                    Vous n&apos;avez pas encore de spots favoris.
                   </li>
                 )}
               </ul>

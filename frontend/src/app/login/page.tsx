@@ -53,7 +53,7 @@ export default function Login() {
           setError("Échec de la connexion. Veuillez réessayer.");
         }
       }
-    } catch (err) {
+    } catch  {
       setError("Erreur réseau. Veuillez réessayer plus tard.");
     } finally {
       setLoading(false);
@@ -138,7 +138,7 @@ export default function Login() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Pas encore inscrit ?{" "}
+            Pas encore inscrit ?
             <Link
               href="/inscription"
               className="text-[#0096C7] font-semibold hover:underline"
