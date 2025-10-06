@@ -296,7 +296,7 @@ export default function FindSpotPage() {
                 >
                   <button
                     onClick={() => handleSearch(spot.name)}
-                    className="w-full text-left flex items-center gap-4"
+                    className=" cursor-pointer w-full text-left flex items-center gap-4"
                   >
                     <MapPin size={24} className="text-[#0077B6]" />
                     <div>
