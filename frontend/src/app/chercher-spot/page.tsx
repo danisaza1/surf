@@ -4,6 +4,26 @@ import { useRouter } from "next/navigation";
 import { Star, Search, Waves, MapPin, ArrowRight, XCircle } from "lucide-react";
 import MainLayout from "../../components/MainLayout";
 
+// Tipo para manejar spots tanto hardcodeados como de API
+interface SpotData {
+  key: string;
+  name: string;
+  location: string;
+  lat: number;
+  lon: number;
+  display_name?: string;
+  place_id?: string; // Para spots de API
+}
+
+// Tipo para los favoritos del backend
+interface FavoriteSpot {
+  api_place_id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  display_name?: string;
+}
+
 // Lista de spots de surf predefinidos con coordenadas completas
 const surfSpots: SpotData[] = [
   {
@@ -56,17 +76,6 @@ const surfSpots: SpotData[] = [
   },
 ];
 
-// Tipo para manejar spots tanto hardcodeados como de API
-interface SpotData {
-  key: string;
-  name: string;
-  location: string;
-  lat: number;
-  lon: number;
-  display_name?: string;
-  place_id?: string; // Para spots de API
-}
-
 export default function FindSpotPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -85,7 +94,6 @@ export default function FindSpotPage() {
   // Cargar favoritos desde el backend
   useEffect(() => {
     const fetchFavorites = async () => {
-      // 🚨 CORRECCIÓN 1: Obtener el token de acceso
       const token = localStorage.getItem("accessToken");
       if (!token) {
         console.warn("No se encontró el token de acceso. No se cargarán los favoritos.");
@@ -94,7 +102,6 @@ export default function FindSpotPage() {
 
       try {
         const res = await fetch("http://localhost:3002/api/favorites", {
-          // 🚨 CORRECCIÓN 1: Enviar el token en los headers
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -105,10 +112,11 @@ export default function FindSpotPage() {
           throw new Error(errorBody.error || `No se pudieron cargar los favoritos: ${res.status}`);
         }
 
-        const data = await res.json();
-        setFavorites(data.map((spot: any) => spot.api_place_id));
-      } catch (err: any) {
-        console.error("Error al cargar favoritos:", err.message);
+        const data: FavoriteSpot[] = await res.json();
+        setFavorites(data.map((spot) => spot.api_place_id));
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+        console.error("Error al cargar favoritos:", errorMessage);
       }
     };
     fetchFavorites();
@@ -118,7 +126,6 @@ export default function FindSpotPage() {
     const spotId = spot.place_id || spot.key;
     if (!spotId) return;
 
-    // 🚨 CORRECCIÓN 2: Obtener el token de acceso
     const token = localStorage.getItem("accessToken");
     if (!token) {
       console.error("Token de acceso no encontrado. Inicie sesión para añadir favoritos.");
@@ -134,7 +141,6 @@ export default function FindSpotPage() {
         method,
         headers: { 
           "Content-Type": "application/json",
-          // 🚨 CORRECCIÓN 2: Enviar el token en los headers
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -147,8 +153,8 @@ export default function FindSpotPage() {
       });
 
       if (!res.ok) throw new Error("Error al actualizar favoritos");
-      const data = await res.json();
-      setFavorites(data.map((f: any) => f.api_place_id));
+      const data: FavoriteSpot[] = await res.json();
+      setFavorites(data.map((f) => f.api_place_id));
     } catch (err) {
       console.error("Error al actualizar favoritos:", err);
     }
@@ -195,8 +201,9 @@ export default function FindSpotPage() {
       try {
         const apiSpot = await searchSpotByAPI(searchTerm);
         if (apiSpot) setSearchedSpot(apiSpot);
-      } catch (err: any) {
-        setError(err.message || "Error al buscar en la API");
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Error al buscar en la API";
+        setError(errorMessage);
         setSearchedSpot(null);
       } finally {
         setLoading(false);
@@ -276,27 +283,27 @@ export default function FindSpotPage() {
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto space-y-4">
+        <div className=" flex-1 overflow-y-auto space-y-4">
           {allSpots.length > 0 ? (
             allSpots.map((spot) => {
               const spotId = spot.place_id || spot.key;
               const isApiSpot = !!spot.place_id;
-               const extraName = spot.location
-    .split(",")
-    .slice(1)
-    .map((s) => s.trim())
-    .join(", ");
+              const extraName = spot.location
+                .split(",")
+                .slice(1)
+                .map((s) => s.trim())
+                .join(", ");
 
-  console.log("Spot:", spot.location, "Extra:", extraName);
+              console.log("Spot:", spot.location, "Extra:", extraName);
 
               return (
                 <div
                   key={spotId}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-inner"
+                  className="  flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-inner"
                 >
                   <button
                     onClick={() => handleSearch(spot.name)}
-                    className="w-full text-left flex items-center gap-4"
+                    className=" cursor-pointer  w-full text-left flex items-center gap-4"
                   >
                     <MapPin size={24} className="text-[#0077B6]" />
                     <div>
@@ -304,19 +311,19 @@ export default function FindSpotPage() {
                         {spot.name.split(",")[0]}
                       </p>
                       <p className="text-sm text-gray-500">
-  {isApiSpot ? (
-    <span className="text-sm text-red">{extraName}</span>
-  ) : (
-    spot.location
-  )}
-</p>
+                        {isApiSpot ? (
+                          <span className="text-sm text-red">{extraName}</span>
+                        ) : (
+                          spot.location
+                        )}
+                      </p>
                     </div>
                   </button>
                   <div className="flex items-center gap-2">
                     <button onClick={() => toggleFavorite(spot)}>
                       <Star
                         size={28}
-                        className={`transition-colors ${
+                        className={`cursor-pointer transition-colors ${
                           favorites.includes(spotId)
                             ? "fill-yellow-400 text-yellow-400"
                             : "text-gray-400"
@@ -325,7 +332,7 @@ export default function FindSpotPage() {
                     </button>
                     <ArrowRight
                       size={20}
-                      className="text-gray-400 hover:text-[#00B4D8]"
+                      className="cursor-pointer text-gray-400 hover:text-[#00B4D8]"
                     />
                   </div>
                 </div>

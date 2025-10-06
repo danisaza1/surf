@@ -22,8 +22,8 @@ export default function SurfGuidePage() {
                 exemple, 9h, 13h, 17h). Chaque valeur indique la prévision pour
                 cette heure spécifique. <br />
                 <br />
-                🔹 La température de l'eau, la hauteur des vagues et le vent
-                peuvent varier légèrement d'une heure à l'autre. <br />
+                🔹 La température de l&apos;eau, la hauteur des vagues et le vent
+                peuvent varier légèrement d&apos;une heure à l&apos;autre. <br />
                 🔹 Attention, les valeurs sont des prévisions et non des mesures
                 exactes.
               </p>
@@ -62,10 +62,10 @@ export default function SurfGuidePage() {
 
             <section className="bg-white/10 p-6 rounded-xl shadow-lg space-y-4">
               <h2 className="text-2xl font-bold text-[#0077B6]">
-                4️⃣ Température de l'eau
+                4️⃣ Température de l&apos;eau
               </h2>
               <p className="text-gray-900">
-                Indique la température de l'eau en degrés Celsius. <br /> <br />
+                Indique la température de l&apos;eau en degrés Celsius. <br /> <br />
                🔹 Plus chaude = plus confortable pour surfer. <br />
                🔹 Plus froide = combinaison néoprène nécessaire.
               </p>
@@ -111,7 +111,7 @@ export default function SurfGuidePage() {
                 <li>Vagues de bonne hauteur (&gt; 30 cm)</li>
                 <li>Vent faible et offshore</li>
                 <li>Marée adaptée au spot</li>
-                <li>Température de l'eau confortable</li>
+                <li>Température de l&apos;eau confortable</li>
               </ul>
             </section>
             {/* Retour à l'accueil */}
@@ -120,7 +120,7 @@ export default function SurfGuidePage() {
     href="accueil"
     className="bg-[#0077B6] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-[#005F99] transition-colors"
   >
-    ⬅ Retour à l'accueil
+    ⬅ Retour à l&apos;accueil
   </a>
 </div>
 

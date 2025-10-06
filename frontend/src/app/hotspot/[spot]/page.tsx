@@ -1,4 +1,5 @@
 import { fetchWeatherApi } from "openmeteo";
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -77,7 +78,7 @@ export default async function SpotPage({
   if (!geoRes.ok) {
     return (
       <div className="p-10 text-center text-red-600">
-        Erreur lors de la récupération du spot "{spot}". ❌
+        Erreur lors de la récupération du spot &quot;{spot}&quot;. ❌
       </div>
     );
   }
@@ -87,7 +88,7 @@ export default async function SpotPage({
   if (!geoData.lat || !geoData.lon) {
     return (
       <div className="p-10 text-center text-red-600">
-        Coordonnées introuvables pour "{spot}". ❌
+        Coordonnées introuvables pour &quot;{spot}&quot;. ❌
       </div>
     );
   }
@@ -290,7 +291,7 @@ export default async function SpotPage({
                 </tr>
                 <tr className="border-b border-gray-200">
                   <td className="pr-4 py-2 text-gray-500">
-                    Température de l'eau:
+                    Température de l&apos;eau:
                   </td>
                   {spotForecastData.map((s, i) => (
                     <td key={i} className="py-2 px-2 text-center text-gray-700">
@@ -312,10 +313,12 @@ export default async function SpotPage({
             <div className="mt-6 space-y-4">
               <h4 className="text-xl font-bold text-[#0077B6]">Webcam</h4>
               <div className="relative w-full h-48 rounded-lg overflow-hidden shadow-lg">
-                <img
+                <Image
                   src={webcamImage}
                   alt={`Webcam de ${spotData.name}`}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               </div>
               <p className="text-xs text-gray-500 text-right mt-2 mb-8">
