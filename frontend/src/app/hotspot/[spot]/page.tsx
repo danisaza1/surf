@@ -30,7 +30,7 @@ const getWeatherComment = (windSpeed: number, waveHeight: number): string => {
 
 // Récupère l'URL de la webcam la plus proche via l'API Windy.
 async function getWebcamImageUrl(lat: number, lon: number): Promise<string> {
-  const apiKey = process.env.WINDY_API_KEY;
+  const apiKey = process.env.WINDY_API_KEY as string | undefined;
   if (!apiKey) {
     console.error("WINDY_API_KEY non configurée.");
     return "/default-webcam.jpg";
@@ -65,12 +65,12 @@ async function getWebcamImageUrl(lat: number, lon: number): Promise<string> {
 export default async function SpotPage({
   params,
 }: {
-  params: { spot: string };
+  params: Promise<{ spot: string }>;
 }) {
   const { spot } = await params; 
   
 
-   const geoRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/geocode?place=${encodeURIComponent(spot)}`, {
+  const geoRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/geocode?place=${encodeURIComponent(spot)}`, {
     cache: "no-store", // force un nouvel appel
   });
   console.log("Réponse de l'API géocodage:", geoRes);
