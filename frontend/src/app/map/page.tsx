@@ -48,10 +48,11 @@ export default function SurfMapPage() {
   const options: Intl.DateTimeFormatOptions = { weekday: 'long'};
   const today = new Intl.DateTimeFormat('fr-FR', options).format(currentDate).charAt(0).toUpperCase() + new Intl.DateTimeFormat('fr-FR', options).format(currentDate).slice(1);
 
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
-
+  
   // Exemple : fetch côté client (dans useEffect)
   useEffect(() => {
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+    
     async function fetchData() {
       const res = await fetch(`${baseUrl}/api/geocode?place=${encodeURIComponent("Hossegor")}`);
       const data = await res.json();
