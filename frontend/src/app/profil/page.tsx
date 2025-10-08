@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+// Se importa 'next/navigation' correctamente para usar 'useRouter'
+import { useRouter } from "next/navigation"; 
 import Image from "next/image";
 import MainLayout from "@/components/MainLayout";
 import { User, MapPin, Waves, Edit3, Save, X, Mail, Star } from "lucide-react";
@@ -46,7 +47,8 @@ export default function ProfilePage() {
         return;
       }
 
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      // La variable de entorno DEBE estar configurada en Vercel para Production
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; 
 
       const headers = {
         Authorization: `Bearer ${token}`,
@@ -54,6 +56,7 @@ export default function ProfilePage() {
       };
 
       try {
+        // --- Carga del Perfil ---
         const profileResponse = await fetch(`${baseUrl}/profile`, { headers });
 
         if (!profileResponse.ok) {
@@ -68,6 +71,7 @@ export default function ProfilePage() {
         setUser(initialProfile);
         setEditedProfile(initialProfile);
 
+        // --- Carga de Favoritos ---
         const favoritesResponse = await fetch(`${baseUrl}/api/favorites`, {
           headers,
         });
@@ -90,13 +94,16 @@ export default function ProfilePage() {
     fetchData();
   }, []);
 
+  // --- FUNCIÓN DE NAVEGACIÓN A FAVORITOS ---
   const handleSpotClick = (fav: FavoriteSpot) => {
-  if (!fav) return;
+    if (!fav || isEditing) return; // Se asegura de no navegar si está editando
 
-  // Generar un key seguro
-  const key = fav.key || fav.api_place_id || fav.name.toLowerCase().replace(/\s+/g, "-");
-  router.push(`/hotspot/${key}`);
-};
+    // Usar una clave segura para la URL
+    const key = fav.api_place_id || fav.name.toLowerCase().replace(/\s+/g, "-");
+    // Se asume que la ruta de detalles es /hotspot/[clave]
+    router.push(`/hotspot/${key}`); 
+  };
+  // ------------------------------------------
 
   const toggleFavoriteRemoval = (spot: FavoriteSpot) => {
     if (!spot.api_place_id) return;
@@ -147,12 +154,7 @@ export default function ProfilePage() {
     // 3. Manejar el campo EMAIL por separado
     if (editedProfile.email !== user.email) {
       profileUpdates.email = editedProfile.email;
-    } else if (editedProfile.email === user.email) {
-      // Si el email NO ha cambiado, NO lo envíes en el payload.
-      // Esto evita que el backend haga la comprobación de unicidad
-      // para un valor que ya está en la base de datos (incluso si es el suyo).
-      // Aunque tu backend lo maneja, esta capa extra de protección es buena.
-    }
+    } 
 
     // 4. Manejar el campo PASSWORD
     if (editedProfile.password && editedProfile.password.trim().length > 0) {
@@ -426,55 +428,63 @@ export default function ProfilePage() {
               <h2 className="text-xl font-semibold text-gray-800 flex gap-2 items-center">
                 <Star size={20} className="text-yellow-400" /> Mes favoris
               </h2>
-                   <ul className="mt-4 space-y-3">
-  {favorites.length > 0 ? (
-    favorites.map((fav) => {
-      const isMarkedForRemoval = removedFavoriteIds.includes(fav.api_place_id);
+              <ul className="mt-4 space-y-3">
+                {favorites.length > 0 ? (
+                  favorites.map((fav) => {
+                    const isMarkedForRemoval = removedFavoriteIds.includes(fav.api_place_id);
 
-      return (
-        <li
-          key={fav.api_place_id}
-          className={`flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-inner transition-opacity ${
-            isMarkedForRemoval ? "opacity-50" : "opacity-100"
-          }`}
-        >
-          {!isEditing ? (
-            <button
-              type="button"
-              onClick={() => handleSpotClick(fav)}
-               disabled={isEditing}
-              className={`flex-1 text-left font-medium capitalize ${
-                isMarkedForRemoval ? "text-gray-400 line-through" : "text-gray-800"
-              } hover:text-[#00B4D8]`}
-            >
-              {fav.name}
-            </button>
-          ) : (
-            <span className={`flex-1 font-medium capitalize ${isMarkedForRemoval ? "text-gray-400 line-through" : "text-gray-800"}`}>
-              {fav.name}
-            </span>
-          )}
+                    return (
+                      <li
+                        key={fav.api_place_id}
+                        className={`flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-inner transition-opacity ${
+                          isMarkedForRemoval ? "opacity-50" : "opacity-100"
+                        }`}
+                      >
+                        {/* --- NOUVEAU CODE : Élément cliquable pour la navigation --- */}
+                        {!isEditing ? (
+                          <div 
+                            role="button" // Indique que c'est cliquable pour l'accessibilité
+                            tabIndex={0} // Rend l'élément focusable
+                            onClick={() => handleSpotClick(fav)} // Gestionnaire de clic
+                            onKeyDown={(e) => { // Gestionnaire pour les touches Entrée/Espace
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                handleSpotClick(fav);
+                              }
+                            }}
+                            className={`flex-1 text-left font-medium capitalize cursor-pointer ${
+                              isMarkedForRemoval ? "text-gray-400 line-through" : "text-gray-800"
+                            } hover:text-[#00B4D8]`} // Styles de survol
+                          >
+                            {fav.name}
+                          </div>
+                        ) : (
+                          // Mode Édition : Juste un span sans clic de navigation
+                          <span className={`flex-1 font-medium capitalize ${isMarkedForRemoval ? "text-gray-400 line-through" : "text-gray-800"}`}>
+                            {fav.name}
+                          </span>
+                        )}
+                        {/* --- FIN NOUVEAU CODE --- */}
 
-          {isEditing && (
-            <button
-              type="button"
-              onClick={() => toggleFavoriteRemoval(fav)}
-              className="text-gray-400 flex items-center justify-center w-8 h-8 p-1 hover:bg-gray-200 rounded-full transition-colors"
-            >
-              <Star size={18} className={`transition-colors ${isMarkedForRemoval ? "text-gray-400" : "text-yellow-400 fill-yellow-400"}`} />
-            </button>
-          )}
+                        {isEditing && (
+                          <button
+                            type="button"
+                            onClick={() => toggleFavoriteRemoval(fav)}
+                            className="text-gray-400 flex items-center justify-center w-8 h-8 p-1 hover:bg-gray-200 rounded-full transition-colors"
+                          >
+                            <Star size={18} className={`transition-colors ${isMarkedForRemoval ? "text-gray-400" : "text-yellow-400 fill-yellow-400"}`} />
+                          </button>
+                        )}
 
-          {!isEditing && <Star size={18} className="text-yellow-400 fill-yellow-400" />}
-        </li>
-      );
-    })
-  ) : (
-    <li className="text-gray-500 text-sm italic p-3 bg-white rounded-lg border border-gray-100">
-      Vous n'avez pas encore de spots favoris.
-    </li>
-  )}
-</ul>
+                        {!isEditing && <Star size={18} className="text-yellow-400 fill-yellow-400" />}
+                      </li>
+                    );
+                  })
+                ) : (
+                  <li className="text-gray-500 text-sm italic p-3 bg-white rounded-lg border border-gray-100">
+                    Vous n'avez pas encore de spots favoris.
+                  </li>
+                )}
+              </ul>
             </div>
 
             {/* Editing buttons */}
