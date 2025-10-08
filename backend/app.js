@@ -7,14 +7,23 @@ import geocodeRouter from "./routes/geocode.js";
 import favoritesRoutes from "./routes/favorites.js";
 // REMOVIDO: import { updateProfile } from "./controllers/authController.js"; 
 
-const port = 3002;
+const port = process.env.PORT || 3002;
 const app = express();
+const allowedOrigins = ["http://localhost:3000", "http://surf-eight-puce.vercel.app"];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: "*", // ou "*" pour tout autoriser
-}));
+app.use(cors(corsOptions)); 
 
 // Routes
 app.use("/", getRoutes);
