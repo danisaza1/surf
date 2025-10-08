@@ -25,8 +25,7 @@ export default function SurfMapPage() {
   useEffect(() => {
     if (typeof window === "undefined") return; // seguridad extra
 
-    const apiUrlFromEnv = process.env.NEXT_PUBLIC_BASE_URL ||  `${window.location.protocol}//${window.location.hostname}:3002`;
-    const baseUrl = apiUrlFromEnv;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
     async function fetchData() {
       const res = await fetch(`${baseUrl}/api/geocode?place=Hossegor`);
@@ -43,9 +42,8 @@ export default function SurfMapPage() {
       const token = localStorage.getItem("accessToken");
       if (!token) return;
 
-        const apiUrlFromEnv = process.env.NEXT_PUBLIC_BASE_URL ||  `${window.location.protocol}//${window.location.hostname}:3002`;
-        const baseUrl = apiUrlFromEnv;
-        
+              const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
       try {
         const response = await fetch(`${baseUrl}/profile`, {
           headers: { Authorization: `Bearer ${token}` },

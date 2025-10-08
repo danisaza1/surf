@@ -55,8 +55,8 @@ export default function ForgottenPassword() {
   setLoading(true);
 
   try {
-    const apiUrlFromEnv = process.env.NEXT_PUBLIC_BASE_URL ||  `${window.location.protocol}//${window.location.hostname}:3002`;
-    const baseUrl = apiUrlFromEnv;
+                  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
 
     const response = await fetch(`${baseUrl}/change-password`, {
       method: "POST",

@@ -20,10 +20,7 @@ export default function Login() {
 
     try {
       // Appel à ton API backend pour vérifier l'email + password
-      const apiUrlFromEnv =
-        process.env.NEXT_PUBLIC_BASE_URL ||
-        `${window.location.protocol}//${window.location.hostname}:3002`;
-      const baseUrl = apiUrlFromEnv;
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
       const response = await fetch(`${baseUrl}/login`, {
         method: "POST",
@@ -34,6 +31,7 @@ export default function Login() {
       });
 
       const data = await response.json();
+    
 
       if (response.ok) {
         const { accessToken } = data;

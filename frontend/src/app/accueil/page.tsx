@@ -41,8 +41,7 @@ export default function ProfilePage() {
 
 
       try {
-        const apiUrlFromEnv = process.env.NEXT_PUBLIC_BASE_URL ||  `${window.location.protocol}//${window.location.hostname}:3002`;
-        const baseUrl = apiUrlFromEnv;
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
 
         // CORRECTION : Utiliser /profile au lieu de /latest-user
         const response = await fetch(`${baseUrl}/profile`, {

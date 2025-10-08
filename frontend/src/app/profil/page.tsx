@@ -47,10 +47,7 @@ export default function ProfilePage() {
         return;
       }
 
-      const apiUrlFromEnv =
-        process.env.NEXT_PUBLIC_BASE_URL ||
-        `${window.location.protocol}//${window.location.hostname}:3002`;
-      const baseUrl = apiUrlFromEnv;
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
       const headers = {
         Authorization: `Bearer ${token}`,
@@ -178,10 +175,8 @@ export default function ProfilePage() {
     });
 
     try {
-      const apiUrlFromEnv =
-        process.env.NEXT_PUBLIC_BASE_URL ||
-        `${window.location.protocol}//${window.location.hostname}:3002`;
-      const baseUrl = apiUrlFromEnv;
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
       const token = localStorage.getItem("accessToken");
 
       const res = await fetch(`${baseUrl}/api/profile`, {

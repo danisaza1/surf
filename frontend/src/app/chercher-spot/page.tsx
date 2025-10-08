@@ -172,10 +172,8 @@ export default function FindSpotPage() {
 
   const searchSpotByAPI = async (query: string): Promise<SpotData | null> => {
     try {
-      const apiUrlFromEnv =
-        process.env.NEXT_PUBLIC_BASE_URL ||
-        `${window.location.protocol}//${window.location.hostname}:3002`;
-      const baseUrl = apiUrlFromEnv;
+             const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
+
       const response = await fetch(
         `${baseUrl}/api/geocode?place=${encodeURIComponent(query)}`
       );
