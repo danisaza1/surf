@@ -9,7 +9,7 @@ import favoritesRoutes from "../routes/favorites.js";
 
 const port = process.env.PORT || 3002;
 const app = express();
-const allowedOrigins = ["http://localhost:3000", "http://surf-eight-puce.vercel.app"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3002", "http://localhost:3003", "http://surf-eight-puce.vercel.app"];
 
 const corsOptions = {
   origin: function (origin, callback) {
