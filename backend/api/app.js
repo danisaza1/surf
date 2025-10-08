@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
-import getRoutes from "./routes/get.js";
+import getRoutes from "../routes/get.js";
 // import postRoutes from "./routes/post.js";
-import authRoutes from "./routes/auth.js";
-import geocodeRouter from "./routes/geocode.js";
-import favoritesRoutes from "./routes/favorites.js";
+import authRoutes from "../routes/auth.js";
+import geocodeRouter from "../routes/geocode.js";
+import favoritesRoutes from "../routes/favorites.js";
 // REMOVIDO: import { updateProfile } from "./controllers/authController.js"; 
 
 const port = process.env.PORT || 3002;
