@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import MainLayout from "@/components/MainLayout";
 import { User, MapPin, Waves, Edit3, Save, X, Mail, Star } from "lucide-react";
@@ -34,10 +35,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<FavoriteSpot[]>([]);
   const [removedFavoriteIds, setRemovedFavoriteIds] = useState<string[]>([]);
-  const [statusMessage, setStatusMessage] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
+  const [statusMessage, setStatusMessage] = useState<{type: "success" | "error";message: string;} | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
@@ -90,6 +89,14 @@ export default function ProfilePage() {
     }
     fetchData();
   }, []);
+
+  const handleSpotClick = (fav: FavoriteSpot) => {
+  if (!fav) return;
+
+  // Generar un key seguro
+  const key = fav.key || fav.api_place_id || fav.name.toLowerCase().replace(/\s+/g, "-");
+  router.push(`/hotspot/${key}`);
+};
 
   const toggleFavoriteRemoval = (spot: FavoriteSpot) => {
     if (!spot.api_place_id) return;
@@ -419,58 +426,55 @@ export default function ProfilePage() {
               <h2 className="text-xl font-semibold text-gray-800 flex gap-2 items-center">
                 <Star size={20} className="text-yellow-400" /> Mes favoris
               </h2>
-              <ul className="mt-4 space-y-3">
-                {favorites.length > 0 ? (
-                  favorites.map((fav) => {
-                    const isMarkedForRemoval = removedFavoriteIds.includes(
-                      fav.api_place_id
-                    );
-                    return (
-                      <li
-                        key={fav.api_place_id}
-                        className={`flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-inner transition-opacity ${
-                          isMarkedForRemoval ? "opacity-50" : "opacity-100"
-                        }`}
-                      >
-                        <span
-                          className={`font-medium capitalize ${
-                            isMarkedForRemoval
-                              ? "text-gray-400 line-through"
-                              : "text-gray-800"
-                          }`}
-                        >
-                          {fav.name}
-                        </span>
-                        {isEditing ? (
-                          <button
-                            type="button"
-                            onClick={() => toggleFavoriteRemoval(fav)}
-                            className="text-gray-400 flex items-center justify-center w-8 h-8 p-1 hover:bg-gray-200 rounded-full transition-colors"
-                          >
-                            <Star
-                              size={18}
-                              className={`transition-colors ${
-                                isMarkedForRemoval
-                                  ? "text-gray-400"
-                                  : "text-yellow-400 fill-yellow-400"
-                              }`}
-                            />
-                          </button>
-                        ) : (
-                          <Star
-                            size={18}
-                            className="text-yellow-400 fill-yellow-400"
-                          />
-                        )}
-                      </li>
-                    );
-                  })
-                ) : (
-                  <li className="text-gray-500 text-sm italic p-3 bg-white rounded-lg border border-gray-100">
-                    Vous n&apos;avez pas encore de spots favoris.
-                  </li>
-                )}
-              </ul>
+                   <ul className="mt-4 space-y-3">
+  {favorites.length > 0 ? (
+    favorites.map((fav) => {
+      const isMarkedForRemoval = removedFavoriteIds.includes(fav.api_place_id);
+
+      return (
+        <li
+          key={fav.api_place_id}
+          className={`flex items-center justify-between bg-gray-50 p-3 rounded-lg shadow-inner transition-opacity ${
+            isMarkedForRemoval ? "opacity-50" : "opacity-100"
+          }`}
+        >
+          {!isEditing ? (
+            <button
+              type="button"
+              onClick={() => handleSpotClick(fav)}
+               disabled={isEditing}
+              className={`flex-1 text-left font-medium capitalize ${
+                isMarkedForRemoval ? "text-gray-400 line-through" : "text-gray-800"
+              } hover:text-[#00B4D8]`}
+            >
+              {fav.name}
+            </button>
+          ) : (
+            <span className={`flex-1 font-medium capitalize ${isMarkedForRemoval ? "text-gray-400 line-through" : "text-gray-800"}`}>
+              {fav.name}
+            </span>
+          )}
+
+          {isEditing && (
+            <button
+              type="button"
+              onClick={() => toggleFavoriteRemoval(fav)}
+              className="text-gray-400 flex items-center justify-center w-8 h-8 p-1 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              <Star size={18} className={`transition-colors ${isMarkedForRemoval ? "text-gray-400" : "text-yellow-400 fill-yellow-400"}`} />
+            </button>
+          )}
+
+          {!isEditing && <Star size={18} className="text-yellow-400 fill-yellow-400" />}
+        </li>
+      );
+    })
+  ) : (
+    <li className="text-gray-500 text-sm italic p-3 bg-white rounded-lg border border-gray-100">
+      Vous n'avez pas encore de spots favoris.
+    </li>
+  )}
+</ul>
             </div>
 
             {/* Editing buttons */}
