@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import "leaflet/dist/leaflet.css";
 import { FlagTriangleRight } from "lucide-react";
