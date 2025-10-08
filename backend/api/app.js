@@ -13,7 +13,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3002",
   "http://localhost:3003",
-  "http://surf-eight-puce.vercel.app",
+  "https://surf-eight-puce.vercel.app",
   "https://surf-4cpv.vercel.app",
 ];
 
