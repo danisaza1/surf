@@ -51,8 +51,9 @@ export default function CreateLog() {
 
     setLoading(true);
     try {
-      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
-      
+        const apiUrlFromEnv = process.env.NEXT_PUBLIC_BASE_URL ||  `${window.location.protocol}//${window.location.hostname}:3002`;
+        const baseUrl = apiUrlFromEnv;
+        
       const response = await fetch(
         `${baseUrl}/signup`,
         {

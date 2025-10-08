@@ -34,7 +34,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<FavoriteSpot[]>([]);
   const [removedFavoriteIds, setRemovedFavoriteIds] = useState<string[]>([]);
-  const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [statusMessage, setStatusMessage] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -44,7 +47,11 @@ export default function ProfilePage() {
         return;
       }
 
-      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      const apiUrlFromEnv =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        `${window.location.protocol}//${window.location.hostname}:3002`;
+      const baseUrl = apiUrlFromEnv;
+
       const headers = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -52,26 +59,31 @@ export default function ProfilePage() {
 
       try {
         const profileResponse = await fetch(`${baseUrl}/profile`, { headers });
-        
+
         if (!profileResponse.ok) {
-          throw new Error(`Profile fetch failed with status: ${profileResponse.status}`);
+          throw new Error(
+            `Profile fetch failed with status: ${profileResponse.status}`
+          );
         }
 
         const userData = await profileResponse.json();
-        const initialProfile: UserProfile = { ...userData, password: '' };
+        const initialProfile: UserProfile = { ...userData, password: "" };
 
         setUser(initialProfile);
         setEditedProfile(initialProfile);
 
-        const favoritesResponse = await fetch(`${baseUrl}/api/favorites`, { headers });
+        const favoritesResponse = await fetch(`${baseUrl}/api/favorites`, {
+          headers,
+        });
 
         if (favoritesResponse.ok) {
           const favoritesData = await favoritesResponse.json();
           setFavorites(favoritesData);
         } else {
-          console.warn(`Favorites fetch returned status: ${favoritesResponse.status}`);
+          console.warn(
+            `Favorites fetch returned status: ${favoritesResponse.status}`
+          );
         }
-
       } catch (err) {
         console.error("Error fetching data:", err);
         setUser(null);
@@ -80,10 +92,10 @@ export default function ProfilePage() {
       }
     }
     fetchData();
-  }, []); 
+  }, []);
 
   const toggleFavoriteRemoval = (spot: FavoriteSpot) => {
-    if (!spot.api_place_id) return; 
+    if (!spot.api_place_id) return;
 
     setRemovedFavoriteIds((prev) =>
       prev.includes(spot.api_place_id)
@@ -96,71 +108,87 @@ export default function ProfilePage() {
     setStatusMessage(null);
     setIsEditing(true);
     setRemovedFavoriteIds([]);
-    setEditedProfile(prev => (prev ? {...prev, password: ''} : null));
+    setEditedProfile((prev) => (prev ? { ...prev, password: "" } : null));
   };
 
-const handleSave = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!user || !editedProfile) {
-    console.error("Vous devez être connecté pour sauvegarder votre profil.");
-    return;
-  }
-  
-  // 1. Preparamos el payload con los campos que no son el email ni la contraseña
-  const profileUpdates: Record<string, string | string[]> = {};
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !editedProfile) {
+      console.error("Vous devez être connecté pour sauvegarder votre profil.");
+      return;
+    }
 
-  // Lista de campos a revisar, excluyendo 'password'
-  const fieldsToCheck: (keyof UserProfile)[] = [
-      'username', 'prenom', 'nom', 'location', 'surf_level'
-  ];
+    // 1. Preparamos el payload con los campos que no son el email ni la contraseña
+    const profileUpdates: Record<string, string | string[]> = {};
 
-  // 2. Comparamos los campos y agregamos solo los que cambiaron
-  fieldsToCheck.forEach(field => {
+    // Lista de campos a revisar, excluyendo 'password'
+    const fieldsToCheck: (keyof UserProfile)[] = [
+      "username",
+      "prenom",
+      "nom",
+      "location",
+      "surf_level",
+    ];
+
+    // 2. Comparamos los campos y agregamos solo los que cambiaron
+    fieldsToCheck.forEach((field) => {
       // Nota: Aquí se usa 'surf_level' en el frontend, que se mapea a 'surf' en el backend
-      const backendField = field === 'surf_level' ? 'surf' : field;
-      
-      if (editedProfile[field] !== user[field]) {
-          profileUpdates[backendField] = editedProfile[field];
-      }
-  });
+      const backendField = field === "surf_level" ? "surf" : field;
 
-  // 3. Manejar el campo EMAIL por separado
-  if (editedProfile.email !== user.email) {
+      if (editedProfile[field] !== user[field]) {
+        profileUpdates[backendField] = editedProfile[field];
+      }
+    });
+
+    // 3. Manejar el campo EMAIL por separado
+    if (editedProfile.email !== user.email) {
       profileUpdates.email = editedProfile.email;
-  } else if (editedProfile.email === user.email) {
+    } else if (editedProfile.email === user.email) {
       // Si el email NO ha cambiado, NO lo envíes en el payload.
       // Esto evita que el backend haga la comprobación de unicidad
       // para un valor que ya está en la base de datos (incluso si es el suyo).
       // Aunque tu backend lo maneja, esta capa extra de protección es buena.
-  }
-  
-  // 4. Manejar el campo PASSWORD
-  if (editedProfile.password && editedProfile.password.trim().length > 0) {
-    profileUpdates.password = editedProfile.password;
-  }
-  
-  // 5. Agregar los favoritos a eliminar SIEMPRE
-  profileUpdates.removedFavorites = removedFavoriteIds;
+    }
 
-  // VERIFICACIÓN IMPORTANTE: Si no hay cambios (salvo favoritos), no enviar.
-  if (Object.keys(profileUpdates).length === 0 && removedFavoriteIds.length === 0) {
-    setStatusMessage({ type: 'error', message: "Aucun changement détecté à sauvegarder." });
-    setIsEditing(false); // Opcional: salir del modo edición
-    return;
-  }
+    // 4. Manejar el campo PASSWORD
+    if (editedProfile.password && editedProfile.password.trim().length > 0) {
+      profileUpdates.password = editedProfile.password;
+    }
 
-  // Ahora el payload solo tiene los cambios, incluyendo el email SOLO si ha cambiado.
-  console.log("Envoi du payload:", { ...profileUpdates, password: profileUpdates.password ? '***' : undefined });
+    // 5. Agregar los favoritos a eliminar SIEMPRE
+    profileUpdates.removedFavorites = removedFavoriteIds;
+
+    // VERIFICACIÓN IMPORTANTE: Si no hay cambios (salvo favoritos), no enviar.
+    if (
+      Object.keys(profileUpdates).length === 0 &&
+      removedFavoriteIds.length === 0
+    ) {
+      setStatusMessage({
+        type: "error",
+        message: "Aucun changement détecté à sauvegarder.",
+      });
+      setIsEditing(false); // Opcional: salir del modo edición
+      return;
+    }
+
+    // Ahora el payload solo tiene los cambios, incluyendo el email SOLO si ha cambiado.
+    console.log("Envoi du payload:", {
+      ...profileUpdates,
+      password: profileUpdates.password ? "***" : undefined,
+    });
 
     try {
-      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      const apiUrlFromEnv =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        `${window.location.protocol}//${window.location.hostname}:3002`;
+      const baseUrl = apiUrlFromEnv;
       const token = localStorage.getItem("accessToken");
-      
+
       const res = await fetch(`${baseUrl}/api/profile`, {
         method: "PUT",
-        headers: { 
-          "Content-Type": "application/json", 
-          "Authorization": `Bearer ${token}` 
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(profileUpdates),
       });
@@ -170,37 +198,43 @@ const handleSave = async (e: React.FormEvent) => {
       if (res.ok) {
         const updatedUserData = await res.json();
         console.log("Données utilisateur mises à jour:", updatedUserData);
-        
+
         const updatedUser: UserProfile = {
-          ...updatedUserData, 
-          password: ''
+          ...updatedUserData,
+          password: "",
         };
-        
+
         setUser(updatedUser);
         setEditedProfile(updatedUser);
 
-        setFavorites((prev) => 
+        setFavorites((prev) =>
           prev.filter((fav) => !removedFavoriteIds.includes(fav.api_place_id))
         );
-        
+
         setRemovedFavoriteIds([]);
         setIsEditing(false);
-        setStatusMessage({ type: 'success', message: "Profil mis à jour avec succès !" });
-
+        setStatusMessage({
+          type: "success",
+          message: "Profil mis à jour avec succès !",
+        });
       } else {
         const errorData = await res.json();
         console.error("Erreur API:", errorData);
-        const errorMessage = errorData.error || "Échec de la mise à jour du profil.";
-        setStatusMessage({ type: 'error', message: errorMessage });
+        const errorMessage =
+          errorData.error || "Échec de la mise à jour du profil.";
+        setStatusMessage({ type: "error", message: errorMessage });
       }
     } catch (error) {
       console.error("Erreur lors de la sauvegarde du profil:", error);
-      setStatusMessage({ type: 'error', message: "Erreur de connexion au serveur." });
+      setStatusMessage({
+        type: "error",
+        message: "Erreur de connexion au serveur.",
+      });
     }
   };
 
   const handleCancel = () => {
-    setEditedProfile(user ? { ...user, password: '' } : null); 
+    setEditedProfile(user ? { ...user, password: "" } : null);
     setRemovedFavoriteIds([]);
     setIsEditing(false);
     setStatusMessage(null);
@@ -223,7 +257,9 @@ const handleSave = async (e: React.FormEvent) => {
   if (loading || !currentData)
     return (
       <MainLayout>
-        <div className="mt-20 text-center w-full h-24 text-black">Chargement...</div>
+        <div className="mt-20 text-center w-full h-24 text-black">
+          Chargement...
+        </div>
       </MainLayout>
     );
 
@@ -268,11 +304,13 @@ const handleSave = async (e: React.FormEvent) => {
           <div className="space-y-6 md:border-l md:border-gray-200 md:pl-8 md:w-2/3">
             {/* Message de statut */}
             {statusMessage && (
-              <div className={`p-4 rounded-lg ${
-                statusMessage.type === 'success' 
-                  ? 'bg-green-50 text-green-800 border border-green-200' 
-                  : 'bg-red-50 text-red-800 border border-red-200'
-              }`}>
+              <div
+                className={`p-4 rounded-lg ${
+                  statusMessage.type === "success"
+                    ? "bg-green-50 text-green-800 border border-green-200"
+                    : "bg-red-50 text-red-800 border border-red-200"
+                }`}
+              >
                 {statusMessage.message}
               </div>
             )}
@@ -284,40 +322,88 @@ const handleSave = async (e: React.FormEvent) => {
             <div className="bg-gray-50 rounded-lg p-5 shadow-inner space-y-6">
               <div className="flex flex-col space-y-4 md:space-y-6">
                 {[
-                  { label: "Nom d'utilisateur", field: "username", icon: User, type: "text" },
-                  { label: "Mot de passe", field: "password", icon: User, type: "password" },
+                  {
+                    label: "Nom d'utilisateur",
+                    field: "username",
+                    icon: User,
+                    type: "text",
+                  },
+                  {
+                    label: "Mot de passe",
+                    field: "password",
+                    icon: User,
+                    type: "password",
+                  },
                   { label: "Email", field: "email", icon: Mail, type: "email" },
-                  { label: "Prénom", field: "prenom", icon: User, type: "text" },
+                  {
+                    label: "Prénom",
+                    field: "prenom",
+                    icon: User,
+                    type: "text",
+                  },
                   { label: "Nom", field: "nom", icon: User, type: "text" },
-                  { label: "Localisation", field: "location", icon: MapPin, type: "text" },
-                  { label: "Niveau de Surf", field: "surf_level", icon: Waves, isSelect: true },
+                  {
+                    label: "Localisation",
+                    field: "location",
+                    icon: MapPin,
+                    type: "text",
+                  },
+                  {
+                    label: "Niveau de Surf",
+                    field: "surf_level",
+                    icon: Waves,
+                    isSelect: true,
+                  },
                 ].map((item) => {
                   const Icon = item.icon;
-                  const fieldValue = currentData[item.field as keyof UserProfile];
+                  const fieldValue =
+                    currentData[item.field as keyof UserProfile];
                   return (
                     <div key={item.field} className="flex items-center gap-4">
                       <Icon size={16} className="text-gray-600 flex-shrink-0" />
                       <div className="flex-1 min-w-0 flex flex-col sm:flex-row justify-between sm:items-center">
-                        <p className="text-sm font-medium text-gray-500">{item.label}</p>
+                        <p className="text-sm font-medium text-gray-500">
+                          {item.label}
+                        </p>
                         {isEditing ? (
                           item.isSelect ? (
                             <select
                               value={fieldValue}
-                              onChange={(e) => handleInputChange(item.field as keyof UserProfile, e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  item.field as keyof UserProfile,
+                                  e.target.value
+                                )
+                              }
                               className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-48 mt-1 sm:mt-0"
                             >
                               <option value="Débutant">Débutant</option>
-                              <option value="Intermédiaire">Intermédiaire</option>
+                              <option value="Intermédiaire">
+                                Intermédiaire
+                              </option>
                               <option value="Avancé">Avancé</option>
                               <option value="Expert">Expert</option>
                             </select>
                           ) : (
                             <input
                               type={item.type}
-                              autoComplete={item.field === "password" ? "new-password" : "off"}
-                              placeholder={item.field === "password" ? "Laisser vide pour ne pas changer" : ""}
+                              autoComplete={
+                                item.field === "password"
+                                  ? "new-password"
+                                  : "off"
+                              }
+                              placeholder={
+                                item.field === "password"
+                                  ? "Laisser vide pour ne pas changer"
+                                  : ""
+                              }
                               value={fieldValue}
-                              onChange={(e) => handleInputChange(item.field as keyof UserProfile, e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  item.field as keyof UserProfile,
+                                  e.target.value
+                                )
+                              }
                               className="text-gray-600 bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#00B4D8] w-full sm:w-48 mt-1 sm:mt-0"
                             />
                           )
@@ -341,7 +427,9 @@ const handleSave = async (e: React.FormEvent) => {
               <ul className="mt-4 space-y-3">
                 {favorites.length > 0 ? (
                   favorites.map((fav) => {
-                    const isMarkedForRemoval = removedFavoriteIds.includes(fav.api_place_id);
+                    const isMarkedForRemoval = removedFavoriteIds.includes(
+                      fav.api_place_id
+                    );
                     return (
                       <li
                         key={fav.api_place_id}
@@ -351,7 +439,9 @@ const handleSave = async (e: React.FormEvent) => {
                       >
                         <span
                           className={`font-medium capitalize ${
-                            isMarkedForRemoval ? "text-gray-400 line-through" : "text-gray-800"
+                            isMarkedForRemoval
+                              ? "text-gray-400 line-through"
+                              : "text-gray-800"
                           }`}
                         >
                           {fav.name}
@@ -365,12 +455,17 @@ const handleSave = async (e: React.FormEvent) => {
                             <Star
                               size={18}
                               className={`transition-colors ${
-                                isMarkedForRemoval ? "text-gray-400" : "text-yellow-400 fill-yellow-400"
+                                isMarkedForRemoval
+                                  ? "text-gray-400"
+                                  : "text-yellow-400 fill-yellow-400"
                               }`}
                             />
                           </button>
                         ) : (
-                          <Star size={18} className="text-yellow-400 fill-yellow-400" />
+                          <Star
+                            size={18}
+                            className="text-yellow-400 fill-yellow-400"
+                          />
                         )}
                       </li>
                     );

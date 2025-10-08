@@ -20,18 +20,18 @@ export default function Login() {
 
     try {
       // Appel à ton API backend pour vérifier l'email + password
-       const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
-      
-      const response = await fetch(
-        `${baseUrl}/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const apiUrlFromEnv =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        `${window.location.protocol}//${window.location.hostname}:3002`;
+      const baseUrl = apiUrlFromEnv;
+
+      const response = await fetch(`${baseUrl}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await response.json();
 
@@ -53,7 +53,7 @@ export default function Login() {
           setError("Échec de la connexion. Veuillez réessayer.");
         }
       }
-    } catch  {
+    } catch {
       setError("Erreur réseau. Veuillez réessayer plus tard.");
     } finally {
       setLoading(false);
@@ -127,13 +127,13 @@ export default function Login() {
               Mot de passe oublié ?
             </Link>
           </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Chargement..." : "Je me connecte"}
-            </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#0077B6] text-white font-bold py-3 rounded-full flex items-center justify-center gap-2 text-lg shadow-lg hover:bg-[#005F99] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Chargement..." : "Je me connecte"}
+          </button>
         </form>
 
         <div className="mt-6 text-center">
@@ -151,7 +151,3 @@ export default function Login() {
     </div>
   );
 }
-
-          
-          
-

@@ -96,7 +96,9 @@ export default function FindSpotPage() {
     const fetchFavorites = async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.warn("No se encontró el token de acceso. No se cargarán los favoritos.");
+        console.warn(
+          "No se encontró el token de acceso. No se cargarán los favoritos."
+        );
         return;
       }
 
@@ -106,16 +108,22 @@ export default function FindSpotPage() {
             Authorization: `Bearer ${token}`,
           },
         });
-        
+
         if (!res.ok) {
-          const errorBody = await res.json().catch(() => ({ error: "Error de servidor" }));
-          throw new Error(errorBody.error || `No se pudieron cargar los favoritos: ${res.status}`);
+          const errorBody = await res
+            .json()
+            .catch(() => ({ error: "Error de servidor" }));
+          throw new Error(
+            errorBody.error ||
+              `No se pudieron cargar los favoritos: ${res.status}`
+          );
         }
 
         const data: FavoriteSpot[] = await res.json();
         setFavorites(data.map((spot) => spot.api_place_id));
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+        const errorMessage =
+          err instanceof Error ? err.message : "Error desconocido";
         console.error("Error al cargar favoritos:", errorMessage);
       }
     };
@@ -128,7 +136,9 @@ export default function FindSpotPage() {
 
     const token = localStorage.getItem("accessToken");
     if (!token) {
-      console.error("Token de acceso no encontrado. Inicie sesión para añadir favoritos.");
+      console.error(
+        "Token de acceso no encontrado. Inicie sesión para añadir favoritos."
+      );
       setError("Inicie sesión para añadir/quitar favoritos.");
       return;
     }
@@ -139,7 +149,7 @@ export default function FindSpotPage() {
     try {
       const res = await fetch("http://localhost:3002/api/favorites", {
         method,
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -162,7 +172,10 @@ export default function FindSpotPage() {
 
   const searchSpotByAPI = async (query: string): Promise<SpotData | null> => {
     try {
-      const baseUrl = `${window.location.protocol}//${window.location.hostname}:3002`;
+      const apiUrlFromEnv =
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        `${window.location.protocol}//${window.location.hostname}:3002`;
+      const baseUrl = apiUrlFromEnv;
       const response = await fetch(
         `${baseUrl}/api/geocode?place=${encodeURIComponent(query)}`
       );
@@ -202,7 +215,8 @@ export default function FindSpotPage() {
         const apiSpot = await searchSpotByAPI(searchTerm);
         if (apiSpot) setSearchedSpot(apiSpot);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Error al buscar en la API";
+        const errorMessage =
+          err instanceof Error ? err.message : "Error al buscar en la API";
         setError(errorMessage);
         setSearchedSpot(null);
       } finally {
