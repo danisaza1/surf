@@ -103,7 +103,10 @@ export default function FindSpotPage() {
       }
 
       try {
-        const res = await fetch("http://localhost:3002/api/favorites", {
+
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+        const res = await fetch(`${baseUrl}/api/favorites`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -147,7 +150,9 @@ export default function FindSpotPage() {
     const method = isFav ? "DELETE" : "POST";
 
     try {
-      const res = await fetch("http://localhost:3002/api/favorites", {
+
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      const res = await fetch(`${baseUrl}/api/favorites`, {
         method,
         headers: {
           "Content-Type": "application/json",
